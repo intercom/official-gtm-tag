@@ -1,0 +1,6 @@
+homepage: "https://www.intercom.com/"
+documentation: "https://developers.intercom.com/installing-intercom/docs/intercom-javascript"
+versions:
+  # Latest version
+  - sha: 151cdc0376309d2d32c457d2fa025ec27602075f
+    changeNotes: Initial release.
