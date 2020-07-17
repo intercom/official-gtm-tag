@@ -38,215 +38,497 @@ ___TEMPLATE_PARAMETERS___
 
 [
   {
-    "type": "SELECT",
-    "name": "method",
-    "displayName": "Method",
-    "macrosInSelect": false,
-    "selectItems": [
-      {
-        "value": "install",
-        "displayValue": "Install"
-      },
-      {
-        "value": "boot",
-        "displayValue": "Boot"
-      },
-      {
-        "value": "shutdown",
-        "displayValue": "Shutdown"
-      },
-      {
-        "value": "update",
-        "displayValue": "Update"
-      },
-      {
-        "value": "hide",
-        "displayValue": "Hide"
-      },
-      {
-        "value": "show",
-        "displayValue": "Show"
-      },
-      {
-        "value": "showMesseges",
-        "displayValue": "Show Messages"
-      },
-      {
-        "value": "showNewMessage",
-        "displayValue": "Show New Message"
-      },
-      {
-        "value": "onHide",
-        "displayValue": "On Hide"
-      },
-      {
-        "value": "onShow",
-        "displayValue": "On Show"
-      },
-      {
-        "value": "onUnreadCountChange",
-        "displayValue": "On Unread Count Change"
-      },
-      {
-        "value": "trackEvent",
-        "displayValue": "Track Event"
-      },
-      {
-        "value": "startTour",
-        "displayValue": "Start Tour"
-      }
-    ],
-    "simpleValueType": true,
-    "alwaysInSummary": true,
-    "help": "Either simply install the Messenger or perform other methods as documented in https://developers.intercom.com/installing-intercom/docs/intercom-javascript",
-    "valueValidators": [
-      {
-        "type": "NON_EMPTY"
-      }
-    ],
-    "defaultValue": "install"
-  },
-  {
-    "type": "TEXT",
-    "name": "app_id",
-    "displayName": "Workspace ID",
-    "simpleValueType": true,
-    "alwaysInSummary": false,
-    "notSetText": "Workspace ID is required for Messenger installation",
-    "help": "Your App ID is available in Intercom in Settings -\u003e Installation -\u003e Web",
-    "enablingConditions": [
-      {
-        "paramName": "method",
-        "paramValue": "install",
-        "type": "EQUALS"
-      },
-      {
-        "paramName": "method",
-        "paramValue": "update",
-        "type": "EQUALS"
-      },
-      {
-        "paramName": "method",
-        "paramValue": "boot",
-        "type": "EQUALS"
-      }
-    ]
-  },
-  {
-    "type": "CHECKBOX",
-    "name": "log_impression",
-    "checkboxText": "Log impression at the current URL",
-    "simpleValueType": true,
-    "displayName": "Log Impression",
-    "enablingConditions": [
-      {
-        "paramName": "method",
-        "paramValue": "update",
-        "type": "EQUALS"
-      }
-    ],
-    "help": "When checked, this will add a record showing that the user has visited this URL"
-  },
-  {
     "type": "GROUP",
-    "name": "data_attributes",
-    "displayName": "Data Attributes",
-    "groupStyle": "ZIPPY_CLOSED",
+    "name": "method_group",
+    "displayName": "Method",
+    "groupStyle": "NO_ZIPPY",
     "subParams": [
       {
-        "type": "LABEL",
-        "name": "data_attributes_help",
-        "displayName": "These attributes are used to update user/lead information. \nPlease see https://developers.intercom.com/installing-intercom/docs/javascript-api-attributes-objects#section-data-attributes for detailed information."
-      },
-      {
-        "type": "TEXT",
-        "name": "email",
-        "displayName": "User Email",
-        "simpleValueType": true,
-        "help": "(Optional) Bind this to a variable that would hold the email address of the currently logged-in user (Only applicable to users). \nImportant: Do not enter a specific email address, as this address would apply to all your visitors and skew your data.",
-        "valueValidators": [],
-        "valueHint": "Choose a variable"
-      },
-      {
-        "type": "TEXT",
-        "name": "user_id",
-        "displayName": "User ID",
-        "simpleValueType": true,
-        "help": "(Optional) Bind this to a variable that would hold the \"User ID\" value of the currently logged-in user (Only applicable to users). \nImportant: Do not enter a specific user ID, as this ID would apply to all your visitors and skew your data.",
-        "valueValidators": [],
-        "valueHint": "Choose a variable"
-      },
-      {
-        "type": "TEXT",
-        "name": "created_at",
-        "displayName": "User Sign-Up Timestamp",
-        "simpleValueType": true,
-        "help": "(Optional) Bind this to a variable that would hold the Unix timestamp (in seconds) when the user signed up to your app (Only applicable to users)",
-        "valueValidators": [
+        "type": "SELECT",
+        "name": "method",
+        "displayName": "",
+        "macrosInSelect": false,
+        "selectItems": [
           {
-            "type": "POSITIVE_NUMBER"
+            "value": "install",
+            "displayValue": "Install"
+          },
+          {
+            "value": "boot",
+            "displayValue": "Boot"
+          },
+          {
+            "value": "shutdown",
+            "displayValue": "Shutdown"
+          },
+          {
+            "value": "update",
+            "displayValue": "Update"
+          },
+          {
+            "value": "hide",
+            "displayValue": "Hide"
+          },
+          {
+            "value": "show",
+            "displayValue": "Show"
+          },
+          {
+            "value": "showMessages",
+            "displayValue": "Show Messages"
+          },
+          {
+            "value": "showNewMessage",
+            "displayValue": "Show New Message"
+          },
+          {
+            "value": "onHide",
+            "displayValue": "On Hide"
+          },
+          {
+            "value": "onShow",
+            "displayValue": "On Show"
+          },
+          {
+            "value": "onUnreadCountChange",
+            "displayValue": "On Unread Count Change"
+          },
+          {
+            "value": "trackEvent",
+            "displayValue": "Track Event"
+          },
+          {
+            "value": "startTour",
+            "displayValue": "Start Tour"
           }
         ],
-        "valueHint": "Choose a variable",
-        "valueUnit": "Unix timestamp (in seconds)"
+        "simpleValueType": true,
+        "alwaysInSummary": true,
+        "help": "",
+        "valueValidators": [
+          {
+            "type": "NON_EMPTY"
+          }
+        ],
+        "defaultValue": "install"
       },
       {
-        "type": "TEXT",
-        "name": "name",
-        "displayName": "Name",
-        "simpleValueType": true,
-        "help": "(Optional) Bind this to a variable that would hold name of the current user/lead.\nImportant: Do not enter a specific name, as this would apply to all your visitors/users and skew your data.",
-        "valueValidators": [],
-        "valueHint": "Choose a variable"
+        "type": "LABEL",
+        "name": "install_label",
+        "displayName": "Install Intercom on the current page.",
+        "enablingConditions": [
+          {
+            "paramName": "method",
+            "paramValue": "install",
+            "type": "EQUALS"
+          }
+        ]
       },
       {
-        "type": "TEXT",
-        "name": "phone",
-        "displayName": "Phone Number",
-        "simpleValueType": true,
-        "help": "(Optional) Bind this to a variable that would hold phone number of the current user/lead.\nImportant: Do not enter a specific phone number, as this number would apply to all your visitors/users and skew your data.",
-        "valueValidators": [],
-        "valueHint": "Choose a variable"
+        "type": "LABEL",
+        "name": "boot_label",
+        "displayName": "If you\u0027d like to control when Intercom is loaded, you can use the \u0027boot\u0027 method. \nThis is useful in situations like a one-page JavaScript based application where the user may not be logged in when the page loads.",
+        "enablingConditions": [
+          {
+            "paramName": "method",
+            "paramValue": "boot",
+            "type": "EQUALS"
+          }
+        ]
       },
       {
-        "type": "TEXT",
-        "name": "user_hash",
-        "displayName": "User Hash (Identity Verification)",
-        "simpleValueType": true,
-        "help": "(Optional) Bind this to a variable that would hold the \"user hash\" of the currently logged-in user (Only applicable to users).\nSee more details here: https://docs.intercom.com/configure-intercom-for-your-product-or-site/staying-secure/enable-identity-verification-on-your-web-product",
-        "valueValidators": [],
-        "valueHint": "Choose a variable"
+        "type": "LABEL",
+        "name": "shutdown_label",
+        "displayName": "If you have the Inbox product (combined with another product like Messages) you should call the Intercom shutdown method to clear your users’ conversations anytime they logout of your application. Otherwise, the cookie we use to track who was most recently logged in on a given device or computer will keep these conversations in the Messenger for one week. This method will effectively clear out any user data that you have been passing through the tag.",
+        "enablingConditions": [
+          {
+            "paramName": "method",
+            "paramValue": "shutdown",
+            "type": "EQUALS"
+          }
+        ]
+      },
+      {
+        "type": "LABEL",
+        "name": "update_label",
+        "displayName": "Calling the update method with some new user data will trigger Intercom to look for new messages that should be displayed to the current user and show them if they exist.",
+        "enablingConditions": [
+          {
+            "paramName": "method",
+            "paramValue": "update",
+            "type": "EQUALS"
+          }
+        ]
+      },
+      {
+        "type": "LABEL",
+        "name": "hide_label",
+        "displayName": "This will hide the main Messenger panel if it is open. It will not hide the Messenger Launcher.",
+        "enablingConditions": [
+          {
+            "paramName": "method",
+            "paramValue": "hide",
+            "type": "EQUALS"
+          }
+        ]
+      },
+      {
+        "type": "LABEL",
+        "name": "show_label",
+        "displayName": "This will show the Messenger. If there are no new conversations, it will open to the Messenger Home. If there are, it will open with the message list.",
+        "enablingConditions": [
+          {
+            "paramName": "method",
+            "paramValue": "show",
+            "type": "EQUALS"
+          }
+        ]
+      },
+      {
+        "type": "LABEL",
+        "name": "showMessages_label",
+        "displayName": "This will open the Messenger with the message list.",
+        "enablingConditions": [
+          {
+            "paramName": "method",
+            "paramValue": "showMessages",
+            "type": "EQUALS"
+          }
+        ]
+      },
+      {
+        "type": "LABEL",
+        "name": "showNewMessage_label",
+        "displayName": "This will open the Messenger as if a new conversation was just created.",
+        "enablingConditions": [
+          {
+            "paramName": "method",
+            "paramValue": "showNewMessage",
+            "type": "EQUALS"
+          }
+        ]
+      },
+      {
+        "type": "LABEL",
+        "name": "onShow_label",
+        "displayName": "When we show the messenger, you can trigger a custom event.",
+        "enablingConditions": [
+          {
+            "paramName": "method",
+            "paramValue": "onShow",
+            "type": "EQUALS"
+          }
+        ]
+      },
+      {
+        "type": "LABEL",
+        "name": "onHide_label",
+        "displayName": "When we hide the messenger, you can trigger a custom event.",
+        "enablingConditions": [
+          {
+            "paramName": "method",
+            "paramValue": "onHide",
+            "type": "EQUALS"
+          }
+        ]
+      },
+      {
+        "type": "LABEL",
+        "name": "onUnreadCountChange_label",
+        "displayName": "This method allows you to register a custom event that will be triggered immediately when invoked, and again whenever the current number of unread messages changes.\nThe new “unread count” will be available as a dataLayer variable named “intercom_unread_count”.",
+        "enablingConditions": [
+          {
+            "paramName": "method",
+            "paramValue": "onUnreadCountChange",
+            "type": "EQUALS"
+          }
+        ]
+      },
+      {
+        "type": "LABEL",
+        "name": "trackEvent_label",
+        "displayName": "You can submit an event using the trackEvent method. This will associate the event with the currently logged in user and send it to Intercom.",
+        "enablingConditions": [
+          {
+            "paramName": "method",
+            "paramValue": "trackEvent",
+            "type": "EQUALS"
+          }
+        ]
+      },
+      {
+        "type": "LABEL",
+        "name": "startTour_label",
+        "displayName": "If you would like to trigger a tour based on an action a user or visitor takes in your site or application, you can use this method.",
+        "enablingConditions": [
+          {
+            "paramName": "method",
+            "paramValue": "startTour",
+            "type": "EQUALS"
+          }
+        ]
       }
     ],
-    "enablingConditions": [
-      {
-        "paramName": "method",
-        "paramValue": "install",
-        "type": "EQUALS"
-      },
-      {
-        "paramName": "method",
-        "paramValue": "update",
-        "type": "EQUALS"
-      },
-      {
-        "paramName": "method",
-        "paramValue": "boot",
-        "type": "EQUALS"
-      }
-    ],
-    "help": "(Optional) These attributes are used to update user/lead information. Please see https://developers.intercom.com/installing-intercom/docs/javascript-api-attributes-objects#section-data-attributes for detailed information."
+    "help": "Either simply install the Messenger or perform other methods as documented in https://developers.intercom.com/installing-intercom/docs/intercom-javascript"
   },
   {
     "type": "GROUP",
-    "name": "custom_attributes_section",
-    "displayName": "Custom Data Attributes",
-    "groupStyle": "ZIPPY_CLOSED",
+    "name": "method_arguments",
+    "displayName": "Method Arguments",
+    "groupStyle": "ZIPPY_OPEN",
     "subParams": [
       {
+        "type": "GROUP",
+        "name": "install_boot_update_arguments",
+        "displayName": "",
+        "groupStyle": "NO_ZIPPY",
+        "subParams": [
+          {
+            "type": "TEXT",
+            "name": "app_id",
+            "displayName": "Workspace ID",
+            "simpleValueType": true,
+            "alwaysInSummary": false,
+            "notSetText": "Workspace ID is required for Messenger installation",
+            "help": "Your App ID is available in Intercom in Settings -\u003e Installation -\u003e Web",
+            "enablingConditions": [
+              {
+                "paramName": "method",
+                "paramValue": "install",
+                "type": "EQUALS"
+              },
+              {
+                "paramName": "method",
+                "paramValue": "update",
+                "type": "EQUALS"
+              },
+              {
+                "paramName": "method",
+                "paramValue": "boot",
+                "type": "EQUALS"
+              }
+            ]
+          },
+          {
+            "type": "CHECKBOX",
+            "name": "log_impression",
+            "checkboxText": "Log impression at the current URL",
+            "simpleValueType": true,
+            "displayName": "Log Impression",
+            "enablingConditions": [
+              {
+                "paramName": "method",
+                "paramValue": "update",
+                "type": "EQUALS"
+              }
+            ],
+            "help": "When checked, this will add a record showing that the user has visited this URL"
+          },
+          {
+            "type": "GROUP",
+            "name": "data_attributes",
+            "displayName": "Data Attributes",
+            "groupStyle": "ZIPPY_CLOSED",
+            "subParams": [
+              {
+                "type": "LABEL",
+                "name": "data_attributes_help",
+                "displayName": "These attributes are used to update user/lead information. \nPlease see https://developers.intercom.com/installing-intercom/docs/javascript-api-attributes-objects#section-data-attributes for detailed information."
+              },
+              {
+                "type": "TEXT",
+                "name": "email",
+                "displayName": "User Email",
+                "simpleValueType": true,
+                "help": "(Optional) Bind this to a variable that would hold the email address of the currently logged-in user (Only applicable to users). \nImportant: Do not enter a specific email address, as this address would apply to all your visitors and skew your data.",
+                "valueValidators": [],
+                "valueHint": "Choose a variable"
+              },
+              {
+                "type": "TEXT",
+                "name": "user_id",
+                "displayName": "User ID",
+                "simpleValueType": true,
+                "help": "(Optional) Bind this to a variable that would hold the \"User ID\" value of the currently logged-in user (Only applicable to users). \nImportant: Do not enter a specific user ID, as this ID would apply to all your visitors and skew your data.",
+                "valueValidators": [],
+                "valueHint": "Choose a variable"
+              },
+              {
+                "type": "TEXT",
+                "name": "created_at",
+                "displayName": "User Sign-Up Timestamp",
+                "simpleValueType": true,
+                "help": "(Optional) Bind this to a variable that would hold the Unix timestamp (in seconds) when the user signed up to your app (Only applicable to users)",
+                "valueValidators": [
+                  {
+                    "type": "POSITIVE_NUMBER"
+                  }
+                ],
+                "valueHint": "Choose a variable",
+                "valueUnit": "Unix timestamp (in seconds)"
+              },
+              {
+                "type": "TEXT",
+                "name": "name",
+                "displayName": "Name",
+                "simpleValueType": true,
+                "help": "(Optional) Bind this to a variable that would hold name of the current user/lead.\nImportant: Do not enter a specific name, as this would apply to all your visitors/users and skew your data.",
+                "valueValidators": [],
+                "valueHint": "Choose a variable"
+              },
+              {
+                "type": "TEXT",
+                "name": "phone",
+                "displayName": "Phone Number",
+                "simpleValueType": true,
+                "help": "(Optional) Bind this to a variable that would hold phone number of the current user/lead.\nImportant: Do not enter a specific phone number, as this number would apply to all your visitors/users and skew your data.",
+                "valueValidators": [],
+                "valueHint": "Choose a variable"
+              },
+              {
+                "type": "TEXT",
+                "name": "user_hash",
+                "displayName": "User Hash (Identity Verification)",
+                "simpleValueType": true,
+                "help": "(Optional) Bind this to a variable that would hold the \"user hash\" of the currently logged-in user (Only applicable to users).\nSee more details here: https://docs.intercom.com/configure-intercom-for-your-product-or-site/staying-secure/enable-identity-verification-on-your-web-product",
+                "valueValidators": [],
+                "valueHint": "Choose a variable"
+              }
+            ],
+            "enablingConditions": [
+              {
+                "paramName": "method",
+                "paramValue": "install",
+                "type": "EQUALS"
+              },
+              {
+                "paramName": "method",
+                "paramValue": "update",
+                "type": "EQUALS"
+              },
+              {
+                "paramName": "method",
+                "paramValue": "boot",
+                "type": "EQUALS"
+              }
+            ],
+            "help": "(Optional) These attributes are used to update user/lead information. Please see https://developers.intercom.com/installing-intercom/docs/javascript-api-attributes-objects#section-data-attributes for detailed information."
+          },
+          {
+            "type": "GROUP",
+            "name": "custom_attributes_section",
+            "displayName": "Custom Data Attributes",
+            "groupStyle": "ZIPPY_CLOSED",
+            "subParams": [
+              {
+                "type": "SIMPLE_TABLE",
+                "name": "custom_attributes",
+                "displayName": "Custom Attributes",
+                "simpleTableColumns": [
+                  {
+                    "defaultValue": "",
+                    "displayName": "Attribute Name",
+                    "name": "attr_key",
+                    "type": "TEXT"
+                  },
+                  {
+                    "defaultValue": "",
+                    "displayName": "Attribute Value",
+                    "name": "attr_value",
+                    "type": "TEXT"
+                  }
+                ],
+                "enablingConditions": [],
+                "help": ""
+              }
+            ],
+            "enablingConditions": [
+              {
+                "paramName": "method",
+                "paramValue": "install",
+                "type": "EQUALS"
+              },
+              {
+                "paramName": "method",
+                "paramValue": "update",
+                "type": "EQUALS"
+              },
+              {
+                "paramName": "method",
+                "paramValue": "boot",
+                "type": "EQUALS"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "TEXT",
+        "name": "prepopulated_message",
+        "displayName": "Pre-Populate Message",
+        "simpleValueType": true,
+        "enablingConditions": [
+          {
+            "paramName": "method",
+            "paramValue": "showNewMessage",
+            "type": "EQUALS"
+          }
+        ],
+        "help": "(Optional) Pre-populate the message composer (only possible with Intercom\u0027s Inbox Essential \u0026 Pro product)"
+      },
+      {
+        "type": "TEXT",
+        "name": "callback_event_name",
+        "displayName": "Event Name",
+        "simpleValueType": true,
+        "notSetText": "Event name is required for this method",
+        "enablingConditions": [
+          {
+            "paramName": "method",
+            "paramValue": "onHide",
+            "type": "EQUALS"
+          },
+          {
+            "paramName": "method",
+            "paramValue": "onShow",
+            "type": "EQUALS"
+          },
+          {
+            "paramName": "method",
+            "paramValue": "onUnreadCountChange",
+            "type": "EQUALS"
+          }
+        ],
+        "help": "Trigger a dataLayer event when we hide/show the messenger or whenever the current number of unread messages changes.",
+        "valueValidators": [
+          {
+            "type": "NON_EMPTY"
+          }
+        ]
+      },
+      {
+        "type": "TEXT",
+        "name": "event_name",
+        "displayName": "Event Name",
+        "simpleValueType": true,
+        "notSetText": "Event name is required for this method",
+        "enablingConditions": [
+          {
+            "paramName": "method",
+            "paramValue": "trackEvent",
+            "type": "EQUALS"
+          }
+        ],
+        "valueValidators": [
+          {
+            "type": "NON_EMPTY"
+          }
+        ]
+      },
+      {
         "type": "SIMPLE_TABLE",
-        "name": "custom_attributes",
-        "displayName": "Custom Attributes",
+        "name": "event_attributes",
+        "displayName": "Event Attributes",
         "simpleTableColumns": [
           {
             "defaultValue": "",
@@ -261,8 +543,34 @@ ___TEMPLATE_PARAMETERS___
             "type": "TEXT"
           }
         ],
-        "enablingConditions": [],
-        "help": ""
+        "enablingConditions": [
+          {
+            "paramName": "method",
+            "paramValue": "trackEvent",
+            "type": "EQUALS"
+          }
+        ],
+        "help": "(Optional) You can add custom information to events in the form of event metadata."
+      },
+      {
+        "type": "TEXT",
+        "name": "tour_id",
+        "displayName": "Tour ID",
+        "simpleValueType": true,
+        "notSetText": "You need to call this method with the id of the tour you wish to show.",
+        "enablingConditions": [
+          {
+            "paramName": "method",
+            "paramValue": "startTour",
+            "type": "EQUALS"
+          }
+        ],
+        "help": "The ID of the tour you wish to show. \nThe ID of the tour can be found in the “Use tour everywhere” section of the tour editor.",
+        "valueValidators": [
+          {
+            "type": "POSITIVE_NUMBER"
+          }
+        ]
       }
     ],
     "enablingConditions": [
@@ -280,33 +588,10 @@ ___TEMPLATE_PARAMETERS___
         "paramName": "method",
         "paramValue": "boot",
         "type": "EQUALS"
-      }
-    ]
-  },
-  {
-    "type": "TEXT",
-    "name": "prepopulated_message",
-    "displayName": "Pre-Populate Message",
-    "simpleValueType": true,
-    "enablingConditions": [
+      },
       {
         "paramName": "method",
         "paramValue": "showNewMessage",
-        "type": "EQUALS"
-      }
-    ],
-    "help": "(Optional) Pre-populate the message composer (only possible with Intercom\u0027s Inbox Essential \u0026 Pro product)"
-  },
-  {
-    "type": "TEXT",
-    "name": "callback_event_name",
-    "displayName": "Event Name",
-    "simpleValueType": true,
-    "notSetText": "Event name is required for this method",
-    "enablingConditions": [
-      {
-        "paramName": "method",
-        "paramValue": "onHide",
         "type": "EQUALS"
       },
       {
@@ -316,82 +601,25 @@ ___TEMPLATE_PARAMETERS___
       },
       {
         "paramName": "method",
+        "paramValue": "onHide",
+        "type": "EQUALS"
+      },
+      {
+        "paramName": "method",
         "paramValue": "onUnreadCountChange",
         "type": "EQUALS"
-      }
-    ],
-    "help": "Trigger a dataLayer event when we hide/show the messenger or whenever the current number of unread messages changes.",
-    "valueValidators": [
+      },
       {
-        "type": "NON_EMPTY"
-      }
-    ]
-  },
-  {
-    "type": "TEXT",
-    "name": "tour_id",
-    "displayName": "Tour ID",
-    "simpleValueType": true,
-    "notSetText": "You need to call this method with the id of the tour you wish to show.",
-    "enablingConditions": [
+        "paramName": "method",
+        "paramValue": "trackEvent",
+        "type": "EQUALS"
+      },
       {
         "paramName": "method",
         "paramValue": "startTour",
         "type": "EQUALS"
       }
-    ],
-    "help": "The id of the tour you wish to show. \nThe id of the tour can be found in the “Use tour everywhere” section of the tour editor.",
-    "valueValidators": [
-      {
-        "type": "POSITIVE_NUMBER"
-      }
     ]
-  },
-  {
-    "type": "TEXT",
-    "name": "event_name",
-    "displayName": "Event Name",
-    "simpleValueType": true,
-    "notSetText": "Event name is required for this method",
-    "enablingConditions": [
-      {
-        "paramName": "method",
-        "paramValue": "trackEvent",
-        "type": "EQUALS"
-      }
-    ],
-    "valueValidators": [
-      {
-        "type": "NON_EMPTY"
-      }
-    ]
-  },
-  {
-    "type": "SIMPLE_TABLE",
-    "name": "event_attributes",
-    "displayName": "Event Attributes",
-    "simpleTableColumns": [
-      {
-        "defaultValue": "",
-        "displayName": "Attribute Name",
-        "name": "attr_key",
-        "type": "TEXT"
-      },
-      {
-        "defaultValue": "",
-        "displayName": "Attribute Value",
-        "name": "attr_value",
-        "type": "TEXT"
-      }
-    ],
-    "enablingConditions": [
-      {
-        "paramName": "method",
-        "paramValue": "trackEvent",
-        "type": "EQUALS"
-      }
-    ],
-    "help": "(Optional) You can add custom information to events in the form of event metadata."
   }
 ]
 
@@ -554,7 +782,7 @@ var methodMap = {
   install: install,
   update: update,
   boot: boot,
-  shutdown: (ic, settings) => invokeMethod('shutdown'),
+  shutdown: invokeMethod,
   hide: invokeMethod,
   show: invokeMethod,
   showMessages: invokeMethod,
@@ -855,6 +1083,7 @@ scenarios:
   code: |-
     const mockData = {
       app_id: 'g0yyb1fs',
+      method: 'shutdown',
     };
 
     // Call runCode to run the template's code.
@@ -862,10 +1091,27 @@ scenarios:
 
     // Verify that the tag finished successfully.
     assertApi('gtmOnSuccess').wasCalled();
+- name: Shutdown
+  code: |-
+    const copyFromWindow = require('copyFromWindow');
+
+    const mockData = {
+      method: 'shutdown',
+    };
+
+    // Call runCode to run the template's code.
+    runCode(mockData);
+
+    // Verify window.Intercom.q has one item ['shutdown']
+    var q = copyFromWindow('Intercom.q');
+    assertThat(q).contains(['shutdown']);
+
+    // Verify that the tag finished successfully.
+    assertApi('gtmOnSuccess').wasCalled();
 
 
 ___NOTES___
 
-Created on 7/15/2020, 7:59:48 AM
+Created on 7/17/2020, 8:08:31 AM
 
 
