@@ -653,7 +653,9 @@ function getDataAttrs(data) {
 
 function setOrUpdateIntercomSettings(data) {
   var data_attrs = getDataAttrs(data);
-  data_attrs.app_id = data.app_id;
+  if (data.app_id) {
+    data_attrs.app_id = data.app_id;
+  }
   var settings = copyFromWindow('intercomSettings') || {};
   for (var k in data_attrs) {
     settings[k] = data_attrs[k];
@@ -664,7 +666,7 @@ function setOrUpdateIntercomSettings(data) {
       settings[k] = custom_attrs[k];
     } 
   }
-  setInWindow('intercomSettings', settings);
+  setInWindow('intercomSettings', settings, true);
   return settings;
 }
 
@@ -709,6 +711,7 @@ function loadMessenger() {
   var app_id = data.app_id;
   if (!app_id) {
     data.gtmOnFailure();
+    return;
   }
   const url = 'https://widget.intercom.io/widget/' + encodeUriComponent(app_id);
   injectScript(url, onLoadSuccess, onLoadFailure, url);
@@ -729,6 +732,11 @@ function update(ic, settings) {
 }
 
 function boot(ic, settings) {
+  if (!data.app_id) {
+    log("Boot failed - Workspace ID missing: ", settings);
+    data.gtmOnFailure();
+    return;
+  }
   log("Booting Messenger, settings: ", settings);
   ic(data.method, settings);
   data.gtmOnSuccess();
@@ -741,7 +749,11 @@ function invokeMethod(ic, settings) {
 }
 
 function showNewMessage(ic, settings) {
-  ic(data.method, data.prepopulated_message);
+  if (data.prepopulated_message) {
+    ic(data.method, data.prepopulated_message);
+  } else {
+    ic(data.method);
+  }
   data.gtmOnSuccess();
 }
 
@@ -751,6 +763,7 @@ function registerCallback(ic, settings) {
   log("registering callback: ", method, callbackEventName);
   if (!method || !callbackEventName) {
     data.gtmOnFailure();
+    return;
   }
   var callback = function(p) {
     log("Callback fired: ", method, callbackEventName);
@@ -766,12 +779,23 @@ function registerCallback(ic, settings) {
 
 function trackEvent(ic, settings) {
   var event_name = data.event_name;
-  var event_attrs = makeTableMap(data.event_attributes, 'attr_key', 'attr_value') || {};
+  if (!event_name) {
+    data.gtmOnFailure();
+    return;
+  }
+  var event_attrs = {};
+  if (data.event_attributes) {
+    event_attrs = makeTableMap(data.event_attributes, 'attr_key', 'attr_value');
+  }
   ic(data.method, event_name, event_attrs);
   data.gtmOnSuccess();
 }
 
 function startTour(ic, settings) {
+  if (!data.tour_id) {
+    data.gtmOnFailure();
+    return;
+  }
   var tour_id = makeInteger(data.tour_id);
   log('startTour: ', tour_id);
   ic(data.method, tour_id);
@@ -795,15 +819,17 @@ var methodMap = {
 };
 
 function main() {
-    let settings = setOrUpdateIntercomSettings(data);
-    var ic = getIntercom();
-    let methodFunc = methodMap[data.method];
-    methodFunc(ic, settings);
+  let settings = setOrUpdateIntercomSettings(data);
+  var ic = getIntercom();
+  let methodFunc = methodMap[data.method];
+  if (!methodFunc) {
+    data.gtmOnFailure();
+    return;
+  }
+  methodFunc(ic, settings);
 }
 
 main();
-// Call data.gtmOnSuccess when the tag is finished.
-//data.gtmOnSuccess();
 
 
 ___WEB_PERMISSIONS___
@@ -1079,39 +1105,803 @@ ___WEB_PERMISSIONS___
 ___TESTS___
 
 scenarios:
-- name: Sanity
+- name: install_fails_with_no_arguments
   code: |-
     const mockData = {
-      app_id: 'g0yyb1fs',
-      method: 'shutdown',
+      method: 'install',
     };
+
+    // Call runCode to run the template's code.
+    runCode(mockData);
+
+    // Verify that `injectScript()` was not called
+    assertApi('injectScript').wasNotCalled();
+
+    // Verify that the tag finished successfully.
+    assertApi('gtmOnFailure').wasCalled();
+- name: install_works_with_workspace_id_only
+  code: |-
+    const mockData = {
+      method: 'install',
+      app_id: TEST_APP_ID,
+    };
+
+    // Mock 'injectScript'
+    mock('injectScript', function(url, onSuccess, onFailure, cacheToken) {
+        onSuccess();
+    });
 
     // Call runCode to run the template's code.
     runCode(mockData);
 
     // Verify that the tag finished successfully.
     assertApi('gtmOnSuccess').wasCalled();
-- name: Shutdown
+- name: install_works_with_partial_arguments
+  code: |-
+    const mockData = {
+      method: 'install',
+      app_id: TEST_APP_ID,
+      email: 'cookie.monster@sesame.com',
+      name: 'Cookie Monster'
+    };
+
+    // Mock 'injectScript'
+    mock('injectScript', function(url, onSuccess, onFailure, cacheToken) {
+        onSuccess();
+    });
+
+    // Call runCode to run the template's code.
+    runCode(mockData);
+
+    // Verify that the tag finished successfully.
+    assertApi('gtmOnSuccess').wasCalled();
+- name: install_works_with_extra_arguments
+  code: |-
+    const mockData = {
+      method: 'install',
+      app_id: TEST_APP_ID,
+      log_impression: true,
+      prepopulated_message: 'cookie!'
+    };
+
+    // Mock 'injectScript'
+    mock('injectScript', function(url, onSuccess, onFailure, cacheToken) {
+        onSuccess();
+    });
+
+    // Call runCode to run the template's code.
+    runCode(mockData);
+
+    // Verify that the tag finished successfully.
+    assertApi('gtmOnSuccess').wasCalled();
+- name: install_works_when_called_more_than_once
+  code: |-
+    const mockData = {
+      method: 'install',
+      app_id: TEST_APP_ID,
+    };
+
+    // Mock 'injectScript'
+    mock('injectScript', function(url, onSuccess, onFailure, cacheToken) {
+        onSuccess();
+    });
+
+    // Call runCode to run the template's code.
+    runCode(mockData);
+
+    // Verify that the tag finished successfully.
+    assertApi('gtmOnSuccess').wasCalled();
+
+    // Do it again!
+    // Call runCode to run the template's code.
+    runCode(mockData);
+
+    // Verify that the tag finished successfully.
+    assertApi('gtmOnSuccess').wasCalled();
+- name: install_fails_when_script_load_fails
+  code: |-
+    const mockData = {
+      method: 'install',
+      app_id: TEST_APP_ID,
+    };
+
+    // Mock 'injectScript'
+    mock('injectScript', function(url, onSuccess, onFailure, cacheToken) {
+        onFailure();
+    });
+
+    // Call runCode to run the template's code.
+    runCode(mockData);
+
+    // Verify that the tag finished successfully.
+    assertApi('gtmOnFailure').wasCalled();
+- name: boot_works_with_workspace_id_only
+  code: |-
+    const copyFromWindow = require('copyFromWindow');
+    const mockData = {
+      method: 'boot',
+      app_id: TEST_APP_ID
+    };
+
+    var q = copyFromWindow('Intercom.q') || [];
+    var q_len = q.length;
+
+    // Call runCode to run the template's code.
+    runCode(mockData);
+
+    // Verify window.Intercom.q has one item ['boot',[args]]
+    q = copyFromWindow('Intercom.q');
+    assertThat(q).hasLength(q_len+1);
+    var q_item = q[q_len];
+    assertThat(q_item).isArray();
+    assertThat(q_item[0]).isEqualTo('boot');
+
+    // Verify that the tag finished successfully.
+    assertApi('gtmOnSuccess').wasCalled();
+- name: boot_works_with_extra attributes
+  code: |-
+    const copyFromWindow = require('copyFromWindow');
+    const mockData = {
+      method: 'boot',
+      app_id: TEST_APP_ID,
+      log_impression: true,
+      prepopulated_message: 'cookie!',
+      email: 'cookie.monster@sesame.com',
+      name: 'Cookie Monster'
+    };
+
+    var q = copyFromWindow('Intercom.q') || [];
+    var q_len = q.length;
+
+    // Call runCode to run the template's code.
+    runCode(mockData);
+
+    // Verify window.Intercom.q has one item ['boot',[args]]
+    q = copyFromWindow('Intercom.q');
+    assertThat(q).hasLength(q_len+1);
+    var q_item = q[q_len];
+    assertThat(q_item).isArray();
+    assertThat(q_item[0]).isEqualTo('boot');
+
+    // Verify that the tag finished successfully.
+    assertApi('gtmOnSuccess').wasCalled();
+- name: boot_fails_with_no_arguments
+  code: |-
+    const copyFromWindow = require('copyFromWindow');
+    const mockData = {
+      method: 'boot'
+    };
+
+    var q = copyFromWindow('Intercom.q') || [];
+    var q_len = q.length;
+
+    // Call runCode to run the template's code.
+    runCode(mockData);
+
+    // Verify window.Intercom.q has one item ['boot',[args]]
+    q = copyFromWindow('Intercom.q');
+    assertThat(q).hasLength(q_len);
+
+    // Verify that the tag finished with failure.
+    assertApi('gtmOnFailure').wasCalled();
+- name: shutdown_works_with_no_arguments
+  code: |-
+    const copyFromWindow = require('copyFromWindow');
+    const mockData = {
+      method: 'shutdown',
+      app_id: TEST_APP_ID
+    };
+
+    var q = copyFromWindow('Intercom.q') || [];
+    var q_len = q.length;
+
+    // Call runCode to run the template's code.
+    runCode(mockData);
+
+    // Verify window.Intercom.q's last item is ['shutdown']
+    q = copyFromWindow('Intercom.q');
+    assertThat(q).hasLength(q_len+1);
+    var q_item = q[q_len];
+    assertIsEventWithNameAndNoArguments(q_item, 'shutdown');
+
+    // Verify that the tag finished successfully.
+    assertApi('gtmOnSuccess').wasCalled();
+- name: update_works_with_no_arguments
   code: |-
     const copyFromWindow = require('copyFromWindow');
 
     const mockData = {
-      method: 'shutdown',
+      method: 'update',
+    };
+
+    var q = copyFromWindow('Intercom.q') || [];
+    var q_len = q.length;
+
+    // Call runCode to run the template's code.
+    runCode(mockData);
+
+    // Verify window.Intercom.q has one item ['boot',[args]]
+    q = copyFromWindow('Intercom.q');
+    assertThat(q).hasLength(q_len+1);
+    var q_item = q[q_len];
+    assertThat(q_item).isArray();
+    assertThat(q_item).hasLength(1);
+    assertThat(q_item[0]).isEqualTo('update');
+
+    // Verify that the tag finished successfully.
+    assertApi('gtmOnSuccess').wasCalled();
+- name: update_passes_settings_when_log_impression_checked
+  code: |-
+    const copyFromWindow = require('copyFromWindow');
+
+    const mockData = {
+      method: 'update',
+      log_impression: true,
+    };
+
+    var q = copyFromWindow('Intercom.q') || [];
+    var q_len = q.length;
+
+    // Call runCode to run the template's code.
+    runCode(mockData);
+
+    // Verify window.Intercom.q has one item ['boot',[args]]
+    q = copyFromWindow('Intercom.q');
+    assertThat(q).hasLength(q_len+1);
+    var q_item = q[q_len];
+    assertThat(q_item).isArray();
+    assertThat(q_item[0]).isEqualTo('update');
+    assertThat(q_item[1]).isObject();
+
+    // Verify that the tag finished successfully.
+    assertApi('gtmOnSuccess').wasCalled();
+- name: update_works_with_partial_arguments
+  code: |-
+    const copyFromWindow = require('copyFromWindow');
+
+    const mockData = {
+      method: 'update',
+      app_id: TEST_APP_ID,
+      log_impression: true,
+      prepopulated_message: 'cookie!',
+      email: TEST_EMAIL,
+      name: TEST_NAME
+    };
+
+    var q = copyFromWindow('Intercom.q') || [];
+    var q_len = q.length;
+
+    // Call runCode to run the template's code.
+    runCode(mockData);
+
+    // Verify window.Intercom.q has one item ['boot',[args]]
+    q = copyFromWindow('Intercom.q');
+    assertThat(q).hasLength(q_len+1);
+    var q_item = q[q_len];
+    assertThat(q_item).isArray();
+    assertThat(q_item[0]).isEqualTo('update');
+
+    // Verify window.intercomSettings were updated correctly
+    var settings = copyFromWindow('intercomSettings');
+    assertThat(settings).isObject();
+    assertThat(settings.email).isEqualTo(TEST_EMAIL);
+    assertThat(settings.name).isEqualTo(TEST_NAME);
+
+    // Verify that the tag finished successfully.
+    assertApi('gtmOnSuccess').wasCalled();
+- name: hide_works_with_no_arguments
+  code: |-
+    const copyFromWindow = require('copyFromWindow');
+    const mockData = {
+      method: 'hide',
+    };
+
+    var q = copyFromWindow('Intercom.q') || [];
+    var q_len = q.length;
+
+    // Call runCode to run the template's code.
+    runCode(mockData);
+
+    // Verify window.Intercom.q's last item is ['hide']
+    q = copyFromWindow('Intercom.q');
+    assertThat(q).hasLength(q_len+1);
+    var q_item = q[q_len];
+    assertIsEventWithNameAndNoArguments(q_item, 'hide');
+
+    // Verify that the tag finished successfully.
+    assertApi('gtmOnSuccess').wasCalled();
+- name: hide_ignores_arguments
+  code: |-
+    const copyFromWindow = require('copyFromWindow');
+    const mockData = {
+      method: 'hide',
+      app_id: TEST_APP_ID,
+      log_impression: true,
+      prepopulated_message: 'cookie!',
+      email: TEST_EMAIL,
+      name: TEST_NAME
+    };
+
+    var q = copyFromWindow('Intercom.q') || [];
+    var q_len = q.length;
+
+    // Call runCode to run the template's code.
+    runCode(mockData);
+
+    // Verify window.Intercom.q's last item is ['hide']
+    q = copyFromWindow('Intercom.q');
+    assertThat(q).hasLength(q_len+1);
+    var q_item = q[q_len];
+    assertIsEventWithNameAndNoArguments(q_item, 'hide');
+
+    // Verify that the tag finished successfully.
+    assertApi('gtmOnSuccess').wasCalled();
+- name: show_works_with_no_arguments
+  code: |-
+    const copyFromWindow = require('copyFromWindow');
+    const TESTED_METHOD = 'show';
+    const mockData = {
+      method: TESTED_METHOD,
+    };
+
+    var q = copyFromWindow('Intercom.q') || [];
+    var q_len = q.length;
+
+    // Call runCode to run the template's code.
+    runCode(mockData);
+
+    // Verify window.Intercom.q's last item is ['hide']
+    q = copyFromWindow('Intercom.q');
+    assertThat(q).hasLength(q_len+1);
+    var q_item = q[q_len];
+    assertIsEventWithNameAndNoArguments(q_item, TESTED_METHOD);
+
+    // Verify that the tag finished successfully.
+    assertApi('gtmOnSuccess').wasCalled();
+- name: showMessages_works_with_no_arguments
+  code: |-
+    const copyFromWindow = require('copyFromWindow');
+    const TESTED_METHOD = 'showMessages';
+    const mockData = {
+      method: TESTED_METHOD,
+    };
+
+    var q = copyFromWindow('Intercom.q') || [];
+    var q_len = q.length;
+
+    // Call runCode to run the template's code.
+    runCode(mockData);
+
+    // Verify window.Intercom.q's last item is ['hide']
+    q = copyFromWindow('Intercom.q');
+    assertThat(q).hasLength(q_len+1);
+    var q_item = q[q_len];
+    assertIsEventWithNameAndNoArguments(q_item, TESTED_METHOD);
+
+    // Verify that the tag finished successfully.
+    assertApi('gtmOnSuccess').wasCalled();
+- name: showNewMessage_works_with_no_arguments
+  code: |-
+    const copyFromWindow = require('copyFromWindow');
+    const TESTED_METHOD = 'showNewMessage';
+    const mockData = {
+      method: TESTED_METHOD,
+    };
+
+    var q = copyFromWindow('Intercom.q') || [];
+    var q_len = q.length;
+
+    // Call runCode to run the template's code.
+    runCode(mockData);
+
+    // Verify window.Intercom.q's last item is ['hide']
+    q = copyFromWindow('Intercom.q');
+    assertThat(q).hasLength(q_len+1);
+    var q_item = q[q_len];
+    assertIsEventWithNameAndNoArguments(q_item, TESTED_METHOD);
+
+    // Verify that the tag finished successfully.
+    assertApi('gtmOnSuccess').wasCalled();
+- name: showNewMessage_works_with_prepopulated_message
+  code: |-
+    const copyFromWindow = require('copyFromWindow');
+    const TESTED_METHOD = 'showNewMessage';
+    const mockData = {
+      method: TESTED_METHOD,
+      prepopulated_message: 'Cookie!',
+    };
+
+    var q = copyFromWindow('Intercom.q') || [];
+    var q_len = q.length;
+
+    // Call runCode to run the template's code.
+    runCode(mockData);
+
+    // Verify window.Intercom.q's last item is ['hide']
+    q = copyFromWindow('Intercom.q');
+    assertThat(q).hasLength(q_len+1);
+    var q_item = q[q_len];
+    assertIsEventWithNameAndStringArgument(q_item, TESTED_METHOD, mockData.prepopulated_message);
+
+    // Verify that the tag finished successfully.
+    assertApi('gtmOnSuccess').wasCalled();
+- name: onHide_fails_with_no_arguments
+  code: |-
+    const copyFromWindow = require('copyFromWindow');
+    const mockData = {
+      method: 'onHide'
+    };
+
+    var q = copyFromWindow('Intercom.q') || [];
+    var q_len = q.length;
+
+    // Call runCode to run the template's code.
+    runCode(mockData);
+
+    // Verify window.Intercom.q has one item ['boot',[args]]
+    q = copyFromWindow('Intercom.q');
+    assertThat(q).hasLength(q_len);
+
+    // Verify that the tag finished with failure.
+    assertApi('gtmOnFailure').wasCalled();
+- name: onHide_works_with_event_name
+  code: |-
+    const copyFromWindow = require('copyFromWindow');
+    const TESTED_METHOD = 'onHide';
+    const mockData = {
+      method: TESTED_METHOD,
+      callback_event_name: 'intercom_on_hide',
+    };
+
+    var q = copyFromWindow('Intercom.q') || [];
+    var q_len = q.length;
+
+    // Call runCode to run the template's code.
+    runCode(mockData);
+
+    // Verify window.Intercom.q's last item is ['hide']
+    q = copyFromWindow('Intercom.q');
+    assertThat(q).hasLength(q_len+1);
+    var q_item = q[q_len];
+    assertIsEventWithNameAndFunctionArgument(q_item, TESTED_METHOD);
+
+    // Verify that the tag finished successfully.
+    assertApi('gtmOnSuccess').wasCalled();
+- name: onShow_fails_with_no_arguments
+  code: |-
+    const copyFromWindow = require('copyFromWindow');
+    const mockData = {
+      method: 'onShow'
+    };
+
+    var q = copyFromWindow('Intercom.q') || [];
+    var q_len = q.length;
+
+    // Call runCode to run the template's code.
+    runCode(mockData);
+
+    // Verify window.Intercom.q has one item ['boot',[args]]
+    q = copyFromWindow('Intercom.q');
+    assertThat(q).hasLength(q_len);
+
+    // Verify that the tag finished with failure.
+    assertApi('gtmOnFailure').wasCalled();
+- name: onShow_works_with_event_name
+  code: |-
+    const copyFromWindow = require('copyFromWindow');
+    const TESTED_METHOD = 'onShow';
+    const mockData = {
+      method: TESTED_METHOD,
+      callback_event_name: 'intercom_on_show',
+    };
+
+    var q = copyFromWindow('Intercom.q') || [];
+    var q_len = q.length;
+
+    // Call runCode to run the template's code.
+    runCode(mockData);
+
+    // Verify window.Intercom.q's last item is ['hide']
+    q = copyFromWindow('Intercom.q');
+    assertThat(q).hasLength(q_len+1);
+    var q_item = q[q_len];
+    assertIsEventWithNameAndFunctionArgument(q_item, TESTED_METHOD);
+
+    // Verify that the tag finished successfully.
+    assertApi('gtmOnSuccess').wasCalled();
+- name: onUnreadCountChange_fails_with_no_arguments
+  code: |-
+    const copyFromWindow = require('copyFromWindow');
+    const mockData = {
+      method: 'onUnreadCountChange'
+    };
+
+    var q = copyFromWindow('Intercom.q') || [];
+    var q_len = q.length;
+
+    // Call runCode to run the template's code.
+    runCode(mockData);
+
+    // Verify window.Intercom.q has one item ['boot',[args]]
+    q = copyFromWindow('Intercom.q');
+    assertThat(q).hasLength(q_len);
+
+    // Verify that the tag finished with failure.
+    assertApi('gtmOnFailure').wasCalled();
+- name: onUnreadCountChange_works_with_event_name
+  code: |-
+    const copyFromWindow = require('copyFromWindow');
+    const TESTED_METHOD = 'onUnreadCountChange';
+    const mockData = {
+      method: TESTED_METHOD,
+      callback_event_name: 'intercom_on_unread_change',
+    };
+
+    var q = copyFromWindow('Intercom.q') || [];
+    var q_len = q.length;
+
+    // Call runCode to run the template's code.
+    runCode(mockData);
+
+    // Verify window.Intercom.q's last item is ['hide']
+    q = copyFromWindow('Intercom.q');
+    assertThat(q).hasLength(q_len+1);
+    var q_item = q[q_len];
+    assertIsEventWithNameAndFunctionArgument(q_item, TESTED_METHOD);
+
+    // Verify that the tag finished successfully.
+    assertApi('gtmOnSuccess').wasCalled();
+- name: trackEvent_fails_with_no_arguments
+  code: |-
+    const copyFromWindow = require('copyFromWindow');
+    const mockData = {
+      method: 'trackEvent'
+    };
+
+    var q = copyFromWindow('Intercom.q') || [];
+    var q_len = q.length;
+
+    // Call runCode to run the template's code.
+    runCode(mockData);
+
+    // Verify window.Intercom.q remains the same size
+    q = copyFromWindow('Intercom.q');
+    assertThat(q).hasLength(q_len);
+
+    // Verify that the tag finished with failure.
+    assertApi('gtmOnFailure').wasCalled();
+- name: trackEvent_fails_with_event_attributes_only
+  code: |-
+    const copyFromWindow = require('copyFromWindow');
+    const mockData = {
+      method: 'trackEvent',
+      event_attributes: [{attr_key: 'SKU', attr_value: 'a1b2c3'}]
+    };
+
+    var q = copyFromWindow('Intercom.q') || [];
+    var q_len = q.length;
+
+    // Call runCode to run the template's code.
+    runCode(mockData);
+
+    // Verify window.Intercom.q remains the same size
+    q = copyFromWindow('Intercom.q');
+    assertThat(q).hasLength(q_len);
+
+    // Verify that the tag finished with failure.
+    assertApi('gtmOnFailure').wasCalled();
+- name: trackEvent_works_with_event_name
+  code: |-
+    const copyFromWindow = require('copyFromWindow');
+    const TESTED_METHOD = 'trackEvent';
+    const mockData = {
+      method: TESTED_METHOD,
+      event_name: 'some_event',
+    };
+
+    var q = copyFromWindow('Intercom.q') || [];
+    var q_len = q.length;
+
+    // Call runCode to run the template's code.
+    runCode(mockData);
+
+    // Verify window.Intercom.q's last item is ['hide']
+    q = copyFromWindow('Intercom.q');
+    assertThat(q).hasLength(q_len+1);
+    var q_item = q[q_len];
+    assertIsEventWithNameAndStringAndObjectArguments(q_item, TESTED_METHOD, mockData.event_name, {});
+
+    // Verify that the tag finished successfully.
+    assertApi('gtmOnSuccess').wasCalled();
+- name: trackEvent_works_with_event_name_and_attributes
+  code: |-
+    const copyFromWindow = require('copyFromWindow');
+    const TESTED_METHOD = 'trackEvent';
+    const mockData = {
+      method: TESTED_METHOD,
+      event_name: 'some_event',
+      event_attributes: [{attr_key: 'SKU', attr_value: 'a1b2c3'}]
+    };
+
+    var q = copyFromWindow('Intercom.q') || [];
+    var q_len = q.length;
+
+    // Call runCode to run the template's code.
+    runCode(mockData);
+
+    // Verify window.Intercom.q's last item is ['hide']
+    q = copyFromWindow('Intercom.q');
+    assertThat(q).hasLength(q_len+1);
+    var q_item = q[q_len];
+    assertIsEventWithNameAndStringAndObjectArguments(q_item, TESTED_METHOD, mockData.event_name, {SKU: 'a1b2c3'});
+
+    // Verify that the tag finished successfully.
+    assertApi('gtmOnSuccess').wasCalled();
+- name: trackEvent_filters_out_ilegal_attributes
+  code: |-
+    const copyFromWindow = require('copyFromWindow');
+    const TESTED_METHOD = 'trackEvent';
+    const mockData = {
+      method: TESTED_METHOD,
+      event_name: 'some_event',
+      event_attributes: [{attr_key: 'SKU', attr_value: 'a1b2c3'}, {key: 'name', value: 'jehovah'}]
+    };
+
+    var q = copyFromWindow('Intercom.q') || [];
+    var q_len = q.length;
+
+    // Call runCode to run the template's code.
+    runCode(mockData);
+
+    // Verify window.Intercom.q's last item is ['hide']
+    q = copyFromWindow('Intercom.q');
+    assertThat(q).hasLength(q_len+1);
+    var q_item = q[q_len];
+    assertIsEventWithNameAndStringAndObjectArguments(q_item, TESTED_METHOD, mockData.event_name, {SKU: 'a1b2c3'});
+
+    // Verify that the tag finished successfully.
+    assertApi('gtmOnSuccess').wasCalled();
+- name: startTour_fails_with_no_arguments
+  code: |-
+    const copyFromWindow = require('copyFromWindow');
+    const mockData = {
+      method: 'startTour'
+    };
+
+    var q = copyFromWindow('Intercom.q') || [];
+    var q_len = q.length;
+
+    // Call runCode to run the template's code.
+    runCode(mockData);
+
+    // Verify window.Intercom.q remains the same size
+    q = copyFromWindow('Intercom.q');
+    assertThat(q).hasLength(q_len);
+
+    // Verify that the tag finished with failure.
+    assertApi('gtmOnFailure').wasCalled();
+- name: startTour_works_with_tour_id
+  code: |-
+    const copyFromWindow = require('copyFromWindow');
+    const TESTED_METHOD = 'startTour';
+    const mockData = {
+      method: TESTED_METHOD,
+      tour_id: 13579,
+    };
+
+    var q = copyFromWindow('Intercom.q') || [];
+    var q_len = q.length;
+
+    // Call runCode to run the template's code.
+    runCode(mockData);
+
+    // Verify window.Intercom.q's last item is ['hide']
+    q = copyFromWindow('Intercom.q');
+    assertThat(q).hasLength(q_len+1);
+    var q_item = q[q_len];
+    assertIsEventWithNameAndIntegerArgument(q_item, TESTED_METHOD, mockData.tour_id);
+
+    // Verify that the tag finished successfully.
+    assertApi('gtmOnSuccess').wasCalled();
+- name: intercomSettings_are_set_correctly
+  code: |
+    const copyFromWindow = require('copyFromWindow');
+
+    const mockData = {
+      method: 'boot',
+      app_id: TEST_APP_ID,
     };
 
     // Call runCode to run the template's code.
     runCode(mockData);
 
-    // Verify window.Intercom.q has one item ['shutdown']
-    var q = copyFromWindow('Intercom.q');
-    assertThat(q).contains(['shutdown']);
+    var settings = copyFromWindow('intercomSettings');
+    var expected_settings = {app_id: TEST_APP_ID};
+    assertThat(settings).isObject();
+    assertThat(settings).isEqualTo(expected_settings);
 
     // Verify that the tag finished successfully.
     assertApi('gtmOnSuccess').wasCalled();
 
+    const mockData1 = {
+      method: 'update',
+      app_id: TEST_APP_ID,
+      email: TEST_EMAIL,
+      name: TEST_NAME,
+      custom_attributes: [{attr_key: 'SKU', attr_value: 'a1b2c3'}]
+    };
+
+    // Call runCode to run the template's code.
+    runCode(mockData1);
+
+    settings = copyFromWindow('intercomSettings');
+    expected_settings = {app_id: TEST_APP_ID, email: TEST_EMAIL, name: TEST_NAME, SKU: 'a1b2c3'};
+    assertThat(settings).isObject();
+    assertThat(settings).isEqualTo(expected_settings);
+
+    // Verify that the tag finished successfully.
+    assertApi('gtmOnSuccess').wasCalled();
+
+    const mockData2 = {
+      method: 'shutdown',
+    };
+
+    // Call runCode to run the template's code.
+    runCode(mockData2);
+
+    settings = copyFromWindow('intercomSettings');
+    assertThat(settings).isObject();
+    assertThat(settings).isEqualTo(expected_settings);
+
+    // Verify that the tag finished successfully.
+    assertApi('gtmOnSuccess').wasCalled();
+setup: |-
+  const TEST_APP_ID = 'g0yyb1fs';
+  const TEST_EMAIL = 'cookie.monster@sesame.com';
+  const TEST_NAME = 'Cookie Monster';
+
+  function assertIsEventWithNameAndNoArguments(item, event_name) {
+    assertThat(item).isArray();
+    assertThat(item).hasLength(1);
+    assertThat(item[0]).isEqualTo(event_name);
+  }
+
+  function assertIsEventWithNameAndStringArgument(item, event_name, string_arg) {
+    assertThat(item).isArray();
+    assertThat(item).hasLength(2);
+    assertThat(item[0]).isEqualTo(event_name);
+    assertThat(item[1]).isString();
+    assertThat(item[1]).isEqualTo(string_arg);
+  }
+
+  function assertIsEventWithNameAndFunctionArgument(item, event_name) {
+    assertThat(item).isArray();
+    assertThat(item).hasLength(2);
+    assertThat(item[0]).isEqualTo(event_name);
+    assertThat(item[1]).isFunction();
+  }
+
+  function assertIsEventWithNameAndStringAndObjectArguments(item, event_name, string_arg, obj_arg) {
+    assertThat(item).isArray();
+    assertThat(item).hasLength(3);
+    assertThat(item[0]).isEqualTo(event_name);
+    assertThat(item[1]).isString();
+    assertThat(item[1]).isEqualTo(string_arg);
+    assertThat(item[2]).isObject();
+    assertThat(item[2]).isEqualTo(obj_arg);
+  }
+
+  function assertIsEventWithNameAndIntegerArgument(item, event_name, int_arg) {
+    assertThat(item).isArray();
+    assertThat(item).hasLength(2);
+    assertThat(item[0]).isEqualTo(event_name);
+    assertThat(item[1]).isNumber();
+    assertThat(item[1]).isEqualTo(int_arg);
+  }
+
 
 ___NOTES___
 
-Created on 7/17/2020, 8:08:31 AM
+Created on 7/21/2020, 5:05:18 PM
 
 
