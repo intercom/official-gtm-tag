@@ -27,7 +27,7 @@ ___INFO___
     "displayName": "Intercom",
     "thumbnail": "data:image/png;base64,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"
   },
-  "description": "Install and get the most of Intercom\u0027s Messenger on your website.",
+  "description": "Install and get the most out of Intercom\u0027s Messenger on your website.",
   "containerContexts": [
     "WEB"
   ]
@@ -393,6 +393,71 @@ ___TEMPLATE_PARAMETERS___
                 "help": "(Optional) Bind this to a variable that would hold the \"user hash\" of the currently logged-in user (Only applicable to users).\nSee more details here: https://docs.intercom.com/configure-intercom-for-your-product-or-site/staying-secure/enable-identity-verification-on-your-web-product",
                 "valueValidators": [],
                 "valueHint": "Choose a variable"
+              },
+              {
+                "type": "TEXT",
+                "name": "avatar_image_url",
+                "displayName": "Avatar Image URL",
+                "simpleValueType": true,
+                "help": "(Optional) The avatar/profile picture of the user. Note: must be HTTPS.",
+                "valueValidators": [],
+                "valueHint": "Choose a variable"
+              },
+              {
+                "type": "SIMPLE_TABLE",
+                "name": "company",
+                "displayName": "Company Attributes",
+                "simpleTableColumns": [
+                  {
+                    "defaultValue": "",
+                    "displayName": "Attribute Name",
+                    "name": "attr_key",
+                    "type": "SELECT",
+                    "isUnique": true,
+                    "macrosInSelect": true,
+                    "selectItems": [
+                      {
+                        "value": "company_id",
+                        "displayValue": "Company ID"
+                      },
+                      {
+                        "value": "created_at",
+                        "displayValue": "Created At (Unix Timestamp)"
+                      },
+                      {
+                        "value": "name",
+                        "displayValue": "Company Name"
+                      },
+                      {
+                        "value": "monthly_spend",
+                        "displayValue": "Monthly Spend"
+                      },
+                      {
+                        "value": "plan",
+                        "displayValue": "Plan"
+                      },
+                      {
+                        "value": "size",
+                        "displayValue": "Size"
+                      },
+                      {
+                        "value": "website",
+                        "displayValue": "Website"
+                      },
+                      {
+                        "value": "industry",
+                        "displayValue": "Industry"
+                      }
+                    ]
+                  },
+                  {
+                    "defaultValue": "",
+                    "displayName": "Attribute Value",
+                    "name": "attr_value",
+                    "type": "TEXT"
+                  }
+                ],
+                "help": "Current user\u0027s company (Only applicable to users). Use variables as Attribute Name to specify custom company attributes.\nSee https://developers.intercom.com/installing-intercom/docs/javascript-api-attributes-objects#section-company-object for more details."
               }
             ],
             "enablingConditions": [
@@ -639,12 +704,24 @@ const dataLayerPush = createQueue('dataLayer');
 const makeTableMap = require('makeTableMap');
 log('data =', data);
 
-const DATA_ATTRS = ['email', 'user_id', 'created_at', 'name', 'phone', 'unsubscribed_from_emails', 'language_override', 'avatar', 'user_hash', 'company', 'companies'];
+const DATA_ATTRS = ['email', 'user_id', 'created_at', 'name', 'phone', 'unsubscribed_from_emails', 'language_override', 'avatar_image_url', 'user_hash', 'company', 'companies'];
+
+const COMPANY_INT_FIELDS = ['created_at', 'monthly_spend', 'size'];
 
 function getDataAttrs(data) {
   var data_attrs = DATA_ATTRS.reduce( (res, attr) => {
     if (data[attr]) {
-        res[attr] = data[attr];
+      var attr_val = data[attr];
+      if (attr == 'avatar_image_url') {
+        attr_val = {
+          type: 'avatar',
+          image_url: data[attr]
+        };
+        attr = 'avatar';
+      } else if (attr == 'company') {
+        attr_val = makeTableMap(data[attr], 'attr_key', 'attr_value') || {};
+      }
+      res[attr] = attr_val;
     }
     return res;
   }, {});
@@ -1542,6 +1619,6 @@ setup: |-
 
 ___NOTES___
 
-Created on 7/22/2020, 11:04:35 AM
+Created on 7/22/2020, 3:29:38 PM
 
 
