@@ -1105,20 +1105,6 @@ ___WEB_PERMISSIONS___
 ___TESTS___
 
 scenarios:
-- name: install_fails_with_no_arguments
-  code: |-
-    const mockData = {
-      method: 'install',
-    };
-
-    // Call runCode to run the template's code.
-    runCode(mockData);
-
-    // Verify that `injectScript()` was not called
-    assertApi('injectScript').wasNotCalled();
-
-    // Verify that the tag finished successfully.
-    assertApi('gtmOnFailure').wasCalled();
 - name: install_works_with_workspace_id_only
   code: |-
     const mockData = {
@@ -1265,71 +1251,6 @@ scenarios:
 
     // Verify that the tag finished successfully.
     assertApi('gtmOnSuccess').wasCalled();
-- name: boot_fails_with_no_arguments
-  code: |-
-    const copyFromWindow = require('copyFromWindow');
-    const mockData = {
-      method: 'boot'
-    };
-
-    var q = copyFromWindow('Intercom.q') || [];
-    var q_len = q.length;
-
-    // Call runCode to run the template's code.
-    runCode(mockData);
-
-    // Verify window.Intercom.q has one item ['boot',[args]]
-    q = copyFromWindow('Intercom.q');
-    assertThat(q).hasLength(q_len);
-
-    // Verify that the tag finished with failure.
-    assertApi('gtmOnFailure').wasCalled();
-- name: shutdown_works_with_no_arguments
-  code: |-
-    const copyFromWindow = require('copyFromWindow');
-    const mockData = {
-      method: 'shutdown',
-      app_id: TEST_APP_ID
-    };
-
-    var q = copyFromWindow('Intercom.q') || [];
-    var q_len = q.length;
-
-    // Call runCode to run the template's code.
-    runCode(mockData);
-
-    // Verify window.Intercom.q's last item is ['shutdown']
-    q = copyFromWindow('Intercom.q');
-    assertThat(q).hasLength(q_len+1);
-    var q_item = q[q_len];
-    assertIsEventWithNameAndNoArguments(q_item, 'shutdown');
-
-    // Verify that the tag finished successfully.
-    assertApi('gtmOnSuccess').wasCalled();
-- name: update_works_with_no_arguments
-  code: |-
-    const copyFromWindow = require('copyFromWindow');
-
-    const mockData = {
-      method: 'update',
-    };
-
-    var q = copyFromWindow('Intercom.q') || [];
-    var q_len = q.length;
-
-    // Call runCode to run the template's code.
-    runCode(mockData);
-
-    // Verify window.Intercom.q has one item ['boot',[args]]
-    q = copyFromWindow('Intercom.q');
-    assertThat(q).hasLength(q_len+1);
-    var q_item = q[q_len];
-    assertThat(q_item).isArray();
-    assertThat(q_item).hasLength(1);
-    assertThat(q_item[0]).isEqualTo('update');
-
-    // Verify that the tag finished successfully.
-    assertApi('gtmOnSuccess').wasCalled();
 - name: update_passes_settings_when_log_impression_checked
   code: |-
     const copyFromWindow = require('copyFromWindow');
@@ -1389,27 +1310,6 @@ scenarios:
 
     // Verify that the tag finished successfully.
     assertApi('gtmOnSuccess').wasCalled();
-- name: hide_works_with_no_arguments
-  code: |-
-    const copyFromWindow = require('copyFromWindow');
-    const mockData = {
-      method: 'hide',
-    };
-
-    var q = copyFromWindow('Intercom.q') || [];
-    var q_len = q.length;
-
-    // Call runCode to run the template's code.
-    runCode(mockData);
-
-    // Verify window.Intercom.q's last item is ['hide']
-    q = copyFromWindow('Intercom.q');
-    assertThat(q).hasLength(q_len+1);
-    var q_item = q[q_len];
-    assertIsEventWithNameAndNoArguments(q_item, 'hide');
-
-    // Verify that the tag finished successfully.
-    assertApi('gtmOnSuccess').wasCalled();
 - name: hide_ignores_arguments
   code: |-
     const copyFromWindow = require('copyFromWindow');
@@ -1436,72 +1336,6 @@ scenarios:
 
     // Verify that the tag finished successfully.
     assertApi('gtmOnSuccess').wasCalled();
-- name: show_works_with_no_arguments
-  code: |-
-    const copyFromWindow = require('copyFromWindow');
-    const TESTED_METHOD = 'show';
-    const mockData = {
-      method: TESTED_METHOD,
-    };
-
-    var q = copyFromWindow('Intercom.q') || [];
-    var q_len = q.length;
-
-    // Call runCode to run the template's code.
-    runCode(mockData);
-
-    // Verify window.Intercom.q's last item is ['hide']
-    q = copyFromWindow('Intercom.q');
-    assertThat(q).hasLength(q_len+1);
-    var q_item = q[q_len];
-    assertIsEventWithNameAndNoArguments(q_item, TESTED_METHOD);
-
-    // Verify that the tag finished successfully.
-    assertApi('gtmOnSuccess').wasCalled();
-- name: showMessages_works_with_no_arguments
-  code: |-
-    const copyFromWindow = require('copyFromWindow');
-    const TESTED_METHOD = 'showMessages';
-    const mockData = {
-      method: TESTED_METHOD,
-    };
-
-    var q = copyFromWindow('Intercom.q') || [];
-    var q_len = q.length;
-
-    // Call runCode to run the template's code.
-    runCode(mockData);
-
-    // Verify window.Intercom.q's last item is ['hide']
-    q = copyFromWindow('Intercom.q');
-    assertThat(q).hasLength(q_len+1);
-    var q_item = q[q_len];
-    assertIsEventWithNameAndNoArguments(q_item, TESTED_METHOD);
-
-    // Verify that the tag finished successfully.
-    assertApi('gtmOnSuccess').wasCalled();
-- name: showNewMessage_works_with_no_arguments
-  code: |-
-    const copyFromWindow = require('copyFromWindow');
-    const TESTED_METHOD = 'showNewMessage';
-    const mockData = {
-      method: TESTED_METHOD,
-    };
-
-    var q = copyFromWindow('Intercom.q') || [];
-    var q_len = q.length;
-
-    // Call runCode to run the template's code.
-    runCode(mockData);
-
-    // Verify window.Intercom.q's last item is ['hide']
-    q = copyFromWindow('Intercom.q');
-    assertThat(q).hasLength(q_len+1);
-    var q_item = q[q_len];
-    assertIsEventWithNameAndNoArguments(q_item, TESTED_METHOD);
-
-    // Verify that the tag finished successfully.
-    assertApi('gtmOnSuccess').wasCalled();
 - name: showNewMessage_works_with_prepopulated_message
   code: |-
     const copyFromWindow = require('copyFromWindow');
@@ -1525,151 +1359,6 @@ scenarios:
 
     // Verify that the tag finished successfully.
     assertApi('gtmOnSuccess').wasCalled();
-- name: onHide_fails_with_no_arguments
-  code: |-
-    const copyFromWindow = require('copyFromWindow');
-    const mockData = {
-      method: 'onHide'
-    };
-
-    var q = copyFromWindow('Intercom.q') || [];
-    var q_len = q.length;
-
-    // Call runCode to run the template's code.
-    runCode(mockData);
-
-    // Verify window.Intercom.q has one item ['boot',[args]]
-    q = copyFromWindow('Intercom.q');
-    assertThat(q).hasLength(q_len);
-
-    // Verify that the tag finished with failure.
-    assertApi('gtmOnFailure').wasCalled();
-- name: onHide_works_with_event_name
-  code: |-
-    const copyFromWindow = require('copyFromWindow');
-    const TESTED_METHOD = 'onHide';
-    const mockData = {
-      method: TESTED_METHOD,
-      callback_event_name: 'intercom_on_hide',
-    };
-
-    var q = copyFromWindow('Intercom.q') || [];
-    var q_len = q.length;
-
-    // Call runCode to run the template's code.
-    runCode(mockData);
-
-    // Verify window.Intercom.q's last item is ['hide']
-    q = copyFromWindow('Intercom.q');
-    assertThat(q).hasLength(q_len+1);
-    var q_item = q[q_len];
-    assertIsEventWithNameAndFunctionArgument(q_item, TESTED_METHOD);
-
-    // Verify that the tag finished successfully.
-    assertApi('gtmOnSuccess').wasCalled();
-- name: onShow_fails_with_no_arguments
-  code: |-
-    const copyFromWindow = require('copyFromWindow');
-    const mockData = {
-      method: 'onShow'
-    };
-
-    var q = copyFromWindow('Intercom.q') || [];
-    var q_len = q.length;
-
-    // Call runCode to run the template's code.
-    runCode(mockData);
-
-    // Verify window.Intercom.q has one item ['boot',[args]]
-    q = copyFromWindow('Intercom.q');
-    assertThat(q).hasLength(q_len);
-
-    // Verify that the tag finished with failure.
-    assertApi('gtmOnFailure').wasCalled();
-- name: onShow_works_with_event_name
-  code: |-
-    const copyFromWindow = require('copyFromWindow');
-    const TESTED_METHOD = 'onShow';
-    const mockData = {
-      method: TESTED_METHOD,
-      callback_event_name: 'intercom_on_show',
-    };
-
-    var q = copyFromWindow('Intercom.q') || [];
-    var q_len = q.length;
-
-    // Call runCode to run the template's code.
-    runCode(mockData);
-
-    // Verify window.Intercom.q's last item is ['hide']
-    q = copyFromWindow('Intercom.q');
-    assertThat(q).hasLength(q_len+1);
-    var q_item = q[q_len];
-    assertIsEventWithNameAndFunctionArgument(q_item, TESTED_METHOD);
-
-    // Verify that the tag finished successfully.
-    assertApi('gtmOnSuccess').wasCalled();
-- name: onUnreadCountChange_fails_with_no_arguments
-  code: |-
-    const copyFromWindow = require('copyFromWindow');
-    const mockData = {
-      method: 'onUnreadCountChange'
-    };
-
-    var q = copyFromWindow('Intercom.q') || [];
-    var q_len = q.length;
-
-    // Call runCode to run the template's code.
-    runCode(mockData);
-
-    // Verify window.Intercom.q has one item ['boot',[args]]
-    q = copyFromWindow('Intercom.q');
-    assertThat(q).hasLength(q_len);
-
-    // Verify that the tag finished with failure.
-    assertApi('gtmOnFailure').wasCalled();
-- name: onUnreadCountChange_works_with_event_name
-  code: |-
-    const copyFromWindow = require('copyFromWindow');
-    const TESTED_METHOD = 'onUnreadCountChange';
-    const mockData = {
-      method: TESTED_METHOD,
-      callback_event_name: 'intercom_on_unread_change',
-    };
-
-    var q = copyFromWindow('Intercom.q') || [];
-    var q_len = q.length;
-
-    // Call runCode to run the template's code.
-    runCode(mockData);
-
-    // Verify window.Intercom.q's last item is ['hide']
-    q = copyFromWindow('Intercom.q');
-    assertThat(q).hasLength(q_len+1);
-    var q_item = q[q_len];
-    assertIsEventWithNameAndFunctionArgument(q_item, TESTED_METHOD);
-
-    // Verify that the tag finished successfully.
-    assertApi('gtmOnSuccess').wasCalled();
-- name: trackEvent_fails_with_no_arguments
-  code: |-
-    const copyFromWindow = require('copyFromWindow');
-    const mockData = {
-      method: 'trackEvent'
-    };
-
-    var q = copyFromWindow('Intercom.q') || [];
-    var q_len = q.length;
-
-    // Call runCode to run the template's code.
-    runCode(mockData);
-
-    // Verify window.Intercom.q remains the same size
-    q = copyFromWindow('Intercom.q');
-    assertThat(q).hasLength(q_len);
-
-    // Verify that the tag finished with failure.
-    assertApi('gtmOnFailure').wasCalled();
 - name: trackEvent_fails_with_event_attributes_only
   code: |-
     const copyFromWindow = require('copyFromWindow');
@@ -1761,100 +1450,51 @@ scenarios:
 
     // Verify that the tag finished successfully.
     assertApi('gtmOnSuccess').wasCalled();
-- name: startTour_fails_with_no_arguments
+- name: methods_fail_with_no_arguments
+  code: "const copyFromWindow = require('copyFromWindow');\nconst METHODS_TO_TEST\
+    \ = ['install', 'boot', 'onHide', 'onShow', 'onUnreadCountChange', 'trackEvent',\
+    \ 'startTour'];\n\nfor (var i=0; i < METHODS_TO_TEST.length; i++) {\n  var q =\
+    \ copyFromWindow('Intercom.q') || [];\n  var q_len = q.length;\n  \n  // Call\
+    \ runCode to run the template's code.\n  runCode({method: METHODS_TO_TEST[i]});\n\
+    \n  // Verify window.Intercom.q remains the same size\n  q = copyFromWindow('Intercom.q');\n\
+    \  assertThat(q).hasLength(q_len);\n\n  // Verify that the tag finished with failure.\n\
+    \  assertApi('gtmOnFailure').wasCalled();  \n}\n\n\n\n"
+- name: methods_works_with_no_arguments
+  code: "const copyFromWindow = require('copyFromWindow');\nconst METHODS_TO_TEST\
+    \ = ['shutdown', 'update', 'hide', 'show', 'showMessages', 'showNewMessage'];\n\
+    \nfor (var i=0; i < METHODS_TO_TEST.length; i++) {\n  var q = copyFromWindow('Intercom.q')\
+    \ || [];\n  var q_len = q.length;\n  \n  // Call runCode to run the template's\
+    \ code.\n  runCode({method: METHODS_TO_TEST[i]});\n\n  // Verify window.Intercom.q\
+    \ remains the same size\n  q = copyFromWindow('Intercom.q');\n  assertThat(q).hasLength(q_len+1);\n\
+    \  var q_item = q[q_len];\n  assertIsEventWithNameAndNoArguments(q_item, METHODS_TO_TEST[i]);\n\
+    \n  // Verify that the tag finished successfully.\n  assertApi('gtmOnSuccess').wasCalled();\n\
+    }\n\n\n\n"
+- name: set_callbacks_work_with_event_name
   code: |-
     const copyFromWindow = require('copyFromWindow');
-    const mockData = {
-      method: 'startTour'
-    };
+    const METHODS_TO_TEST = ['onHide', 'onShow', 'onUnreadCountChange'];
 
-    var q = copyFromWindow('Intercom.q') || [];
-    var q_len = q.length;
+    for (var i=0; i < METHODS_TO_TEST.length; i++) {
+      const mockData = {
+        method: METHODS_TO_TEST[i],
+        callback_event_name: 'intercom_on_something_happened',
+      };
 
-    // Call runCode to run the template's code.
-    runCode(mockData);
+      var q = copyFromWindow('Intercom.q') || [];
+      var q_len = q.length;
 
-    // Verify window.Intercom.q remains the same size
-    q = copyFromWindow('Intercom.q');
-    assertThat(q).hasLength(q_len);
+      // Call runCode to run the template's code.
+      runCode(mockData);
 
-    // Verify that the tag finished with failure.
-    assertApi('gtmOnFailure').wasCalled();
-- name: startTour_works_with_tour_id
-  code: |-
-    const copyFromWindow = require('copyFromWindow');
-    const TESTED_METHOD = 'startTour';
-    const mockData = {
-      method: TESTED_METHOD,
-      tour_id: 13579,
-    };
+      // Verify window.Intercom.q's last item is ['hide']
+      q = copyFromWindow('Intercom.q');
+      assertThat(q).hasLength(q_len+1);
+      var q_item = q[q_len];
+      assertIsEventWithNameAndFunctionArgument(q_item, METHODS_TO_TEST[i]);
 
-    var q = copyFromWindow('Intercom.q') || [];
-    var q_len = q.length;
-
-    // Call runCode to run the template's code.
-    runCode(mockData);
-
-    // Verify window.Intercom.q's last item is ['hide']
-    q = copyFromWindow('Intercom.q');
-    assertThat(q).hasLength(q_len+1);
-    var q_item = q[q_len];
-    assertIsEventWithNameAndIntegerArgument(q_item, TESTED_METHOD, mockData.tour_id);
-
-    // Verify that the tag finished successfully.
-    assertApi('gtmOnSuccess').wasCalled();
-- name: intercomSettings_are_set_correctly
-  code: |
-    const copyFromWindow = require('copyFromWindow');
-
-    const mockData = {
-      method: 'boot',
-      app_id: TEST_APP_ID,
-    };
-
-    // Call runCode to run the template's code.
-    runCode(mockData);
-
-    var settings = copyFromWindow('intercomSettings');
-    var expected_settings = {app_id: TEST_APP_ID};
-    assertThat(settings).isObject();
-    assertThat(settings).isEqualTo(expected_settings);
-
-    // Verify that the tag finished successfully.
-    assertApi('gtmOnSuccess').wasCalled();
-
-    const mockData1 = {
-      method: 'update',
-      app_id: TEST_APP_ID,
-      email: TEST_EMAIL,
-      name: TEST_NAME,
-      custom_attributes: [{attr_key: 'SKU', attr_value: 'a1b2c3'}]
-    };
-
-    // Call runCode to run the template's code.
-    runCode(mockData1);
-
-    settings = copyFromWindow('intercomSettings');
-    expected_settings = {app_id: TEST_APP_ID, email: TEST_EMAIL, name: TEST_NAME, SKU: 'a1b2c3'};
-    assertThat(settings).isObject();
-    assertThat(settings).isEqualTo(expected_settings);
-
-    // Verify that the tag finished successfully.
-    assertApi('gtmOnSuccess').wasCalled();
-
-    const mockData2 = {
-      method: 'shutdown',
-    };
-
-    // Call runCode to run the template's code.
-    runCode(mockData2);
-
-    settings = copyFromWindow('intercomSettings');
-    assertThat(settings).isObject();
-    assertThat(settings).isEqualTo(expected_settings);
-
-    // Verify that the tag finished successfully.
-    assertApi('gtmOnSuccess').wasCalled();
+      // Verify that the tag finished successfully.
+      assertApi('gtmOnSuccess').wasCalled();
+    }
 setup: |-
   const TEST_APP_ID = 'g0yyb1fs';
   const TEST_EMAIL = 'cookie.monster@sesame.com';
@@ -1902,6 +1542,6 @@ setup: |-
 
 ___NOTES___
 
-Created on 7/21/2020, 5:05:18 PM
+Created on 7/22/2020, 11:04:35 AM
 
 
