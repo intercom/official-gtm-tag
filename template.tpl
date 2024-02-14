@@ -455,6 +455,12 @@ ___TEMPLATE_PARAMETERS___
                     "displayName": "Attribute Value",
                     "name": "attr_value",
                     "type": "TEXT"
+                  },
+                  {
+                    "defaultValue": "gtm",
+                    "displayName": "Installation type",
+                    "name": "installation_type",
+                    "type": "TEXT"
                   }
                 ],
                 "help": "Current user\u0027s company (Only applicable to users). Use variables as Attribute Name to specify custom company attributes.\nSee https://developers.intercom.com/installing-intercom/docs/javascript-api-attributes-objects#section-company-object for more details."
@@ -743,6 +749,7 @@ function setOrUpdateIntercomSettings(data) {
       settings[k] = custom_attrs[k];
     } 
   }
+  settings.installation_type = 'gtm';
   setInWindow('intercomSettings', settings, true);
   return settings;
 }
@@ -1413,6 +1420,35 @@ scenarios:
 
     // Verify that the tag finished successfully.
     assertApi('gtmOnSuccess').wasCalled();
+- name: installation_type_is_set
+  code: |-
+    const copyFromWindow = require('copyFromWindow');
+    const mockData = {
+      method: 'boot',
+      app_id: TEST_APP_ID
+    };
+
+    var q = copyFromWindow('Intercom.q') || [];
+    var q_len = q.length;
+
+    // Call runCode to run the template's code.
+    runCode(mockData);
+
+    // Verify window.Intercom.q has one item ['boot',[args]]
+    q = copyFromWindow('Intercom.q');
+    assertThat(q).hasLength(q_len+1);
+    var q_item = q[q_len];
+    assertThat(q_item).isArray();
+    assertThat(q_item[0]).isEqualTo('boot');
+
+    // Verify window.intercomSettings were updated correctly
+    var settings = copyFromWindow('intercomSettings');
+    assertThat(settings).isObject();
+    assertThat(settings.installation_type).isEqualTo('gtm');
+
+    // Verify that the tag finished successfully.
+    assertApi('gtmOnSuccess').wasCalled();
+
 - name: showNewMessage_works_with_prepopulated_message
   code: |-
     const copyFromWindow = require('copyFromWindow');
