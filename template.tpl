@@ -904,6 +904,7 @@ var methodMap = {
   onUnreadCountChange: registerCallback,
   trackEvent: trackEvent,
   startTour: startTour,
+  showSpace: showSpace,
 };
 
 function main() {
