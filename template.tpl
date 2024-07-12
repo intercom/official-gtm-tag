@@ -100,6 +100,10 @@ ___TEMPLATE_PARAMETERS___
           {
             "value": "startTour",
             "displayValue": "Start Tour"
+          },
+          {
+            "value": "showSpace",
+            "displayValue": "Show Space"
           }
         ],
         "simpleValueType": true,
