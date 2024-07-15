@@ -646,8 +646,30 @@ ___TEMPLATE_PARAMETERS___
             "type": "POSITIVE_NUMBER"
           }
         ]
-      }
+      },
+     {
+       "type": "TEXT",
+       "name": "space_name",
+       "displayName": "Space Name",
+       "simpleValueType": true,
+       "notSetText": "You need to call this method with the name of the space you wish to show.",
+       "enablingConditions": [
+         {
+           "paramName": "method",
+           "paramValue": "showSpace",
+           "type": "EQUALS"
+         }
+       ],
+       "help": "The name of the space you wish to show. \nThe name of the space can be 'news', 'help', or any other space name.",
+       "valueValidators": [
+         {
+           "type": "NON_EMPTY"
+         }
+       ]
+     }
     ],
+
+
     "enablingConditions": [
       {
         "paramName": "method",
@@ -887,6 +909,17 @@ function startTour(ic, settings) {
   var tour_id = makeInteger(data.tour_id);
   log('startTour: ', tour_id);
   ic(data.method, tour_id);
+  data.gtmOnSuccess();
+}
+
+function showSpace(ic, settings) {
+  var space_name = data.space_name;
+  if (!space_name) {
+    data.gtmOnFailure();
+    return;
+  }
+  log('showSpace: ', space_name);
+  ic(data.method, space_name);
   data.gtmOnSuccess();
 }
 
