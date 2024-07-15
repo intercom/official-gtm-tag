@@ -5,7 +5,7 @@ versions:
   - sha: 9f48186e15d208adc41cd095cb4e5faceb5cc356
     changeNotes: Add installation_type attribute in the IntercomSettings
   # Older versions
-    - sha: f2fefe0e0da8d34c408a22d97823740989e83ecc
+  - sha: f2fefe0e0da8d34c408a22d97823740989e83ecc
     changeNotes: Add installation_type attribute in the IntercomSettings
   - sha: 24064cfe22a14c89c4ca7c1de120d2aa69404761
     changeNotes: Added support for Avatar and Company details
