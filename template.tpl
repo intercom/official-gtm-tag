@@ -271,6 +271,18 @@ ___TEMPLATE_PARAMETERS___
             "type": "EQUALS"
           }
         ]
+      },
+      {
+        "type": "LABEL",
+        "name": "showSpace_label",
+        "displayName": "If you would like to open particular Messenger space.",
+        "enablingConditions": [
+          {
+            "paramName": "method",
+            "paramValue": "showSpace",
+            "type": "EQUALS"
+          }
+        ]
       }
     ],
     "help": "Either simply install the Messenger or perform other methods as documented in https://developers.intercom.com/installing-intercom/docs/intercom-javascript"
@@ -660,7 +672,7 @@ ___TEMPLATE_PARAMETERS___
            "type": "EQUALS"
          }
        ],
-       "help": "The name of the space you wish to show. \nThe name of the space can be 'news', 'help', or any other space name.",
+       "help": "The name of the space you wish to show. \nThe name of the space can be 'home', 'messages', 'news' or 'help'.",
        "valueValidators": [
          {
            "type": "NON_EMPTY"
@@ -714,6 +726,11 @@ ___TEMPLATE_PARAMETERS___
       {
         "paramName": "method",
         "paramValue": "startTour",
+        "type": "EQUALS"
+      },
+      {
+        "paramName": "method",
+        "paramValue": "showSpace",
         "type": "EQUALS"
       }
     ]
@@ -773,7 +790,7 @@ function setOrUpdateIntercomSettings(data) {
     var custom_attrs = makeTableMap(data.custom_attributes, 'attr_key', 'attr_value') || {};
     for (k in custom_attrs) {
       settings[k] = custom_attrs[k];
-    } 
+    }
   }
   settings.installation_type = 'gtm';
   setInWindow('intercomSettings', settings, true);
@@ -1692,7 +1709,3 @@ setup: |-
 
 
 ___NOTES___
-
-Created on 7/22/2020, 3:29:38 PM
-
-
