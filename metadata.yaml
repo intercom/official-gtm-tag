@@ -2,8 +2,8 @@ homepage: "https://www.intercom.com/"
 documentation: "https://developers.intercom.com/installing-intercom/docs/intercom-javascript"
 versions:
   # Latest version
-  - sha: dd7e124a3c5a03cf7c348267f8f39308d86067e0
-    changeNotes: Added showSpace to method options
+  - sha: 9f48186e15d208adc41cd095cb4e5faceb5cc356
+    changeNotes: Add installation_type attribute in the IntercomSettings
   # Older versions
   - sha: f2fefe0e0da8d34c408a22d97823740989e83ecc
     changeNotes: Add installation_type attribute in the IntercomSettings
