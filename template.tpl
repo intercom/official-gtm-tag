@@ -100,6 +100,10 @@ ___TEMPLATE_PARAMETERS___
           {
             "value": "startTour",
             "displayValue": "Start Tour"
+          },
+          {
+            "value": "showSpace",
+            "displayValue": "Show Space"
           }
         ],
         "simpleValueType": true,
@@ -264,6 +268,18 @@ ___TEMPLATE_PARAMETERS___
           {
             "paramName": "method",
             "paramValue": "startTour",
+            "type": "EQUALS"
+          }
+        ]
+      },
+      {
+        "type": "LABEL",
+        "name": "showSpace_label",
+        "displayName": "If you would like to open a particular Messenger space.",
+        "enablingConditions": [
+          {
+            "paramName": "method",
+            "paramValue": "showSpace",
             "type": "EQUALS"
           }
         ]
@@ -642,7 +658,27 @@ ___TEMPLATE_PARAMETERS___
             "type": "POSITIVE_NUMBER"
           }
         ]
-      }
+      },
+     {
+       "type": "TEXT",
+       "name": "space_name",
+       "displayName": "Space Name",
+       "simpleValueType": true,
+       "notSetText": "You need to call this method with the name of the space you wish to show.",
+       "enablingConditions": [
+         {
+           "paramName": "method",
+           "paramValue": "showSpace",
+           "type": "EQUALS"
+         }
+       ],
+       "help": "The name of the space you wish to show. \nThe name of the space can be 'home', 'messages', 'news' or 'help'.",
+       "valueValidators": [
+         {
+           "type": "NON_EMPTY"
+         }
+       ]
+     }
     ],
     "enablingConditions": [
       {
@@ -688,6 +724,11 @@ ___TEMPLATE_PARAMETERS___
       {
         "paramName": "method",
         "paramValue": "startTour",
+        "type": "EQUALS"
+      },
+      {
+        "paramName": "method",
+        "paramValue": "showSpace",
         "type": "EQUALS"
       }
     ]
@@ -747,7 +788,7 @@ function setOrUpdateIntercomSettings(data) {
     var custom_attrs = makeTableMap(data.custom_attributes, 'attr_key', 'attr_value') || {};
     for (k in custom_attrs) {
       settings[k] = custom_attrs[k];
-    } 
+    }
   }
   settings.installation_type = 'gtm';
   setInWindow('intercomSettings', settings, true);
@@ -886,6 +927,17 @@ function startTour(ic, settings) {
   data.gtmOnSuccess();
 }
 
+function showSpace(ic, settings) {
+  var space_name = data.space_name;
+  if (!space_name) {
+    data.gtmOnFailure();
+    return;
+  }
+  log('showSpace: ', space_name);
+  ic(data.method, space_name);
+  data.gtmOnSuccess();
+}
+
 var methodMap = {
   install: install,
   update: update,
@@ -900,6 +952,7 @@ var methodMap = {
   onUnreadCountChange: registerCallback,
   trackEvent: trackEvent,
   startTour: startTour,
+  showSpace: showSpace,
 };
 
 function main() {
@@ -1563,6 +1616,29 @@ scenarios:
 
     // Verify that the tag finished successfully.
     assertApi('gtmOnSuccess').wasCalled();
+- name: showSpace_works_with_space_name
+  code: |-
+    const copyFromWindow = require('copyFromWindow');
+    const TESTED_METHOD = 'showSpace';
+    const mockData = {
+      method: TESTED_METHOD,
+      space_name: 'news',
+    };
+
+    var q = copyFromWindow('Intercom.q') || [];
+    var q_len = q.length;
+
+    // Call runCode to run the template's code.
+    runCode(mockData);
+
+    // Verify window.Intercom.q's last item is ['showSpace', 'news']
+    q = copyFromWindow('Intercom.q');
+    assertThat(q).hasLength(q_len+1);
+    var q_item = q[q_len];
+    assertIsEventWithNameAndStringArgument(q_item, TESTED_METHOD, mockData.space_name);
+
+    // Verify that the tag finished successfully.
+    assertApi('gtmOnSuccess').wasCalled();
 - name: methods_fail_with_no_arguments
   code: "const copyFromWindow = require('copyFromWindow');\nconst METHODS_TO_TEST\
     \ = ['install', 'boot', 'onHide', 'onShow', 'onUnreadCountChange', 'trackEvent',\
@@ -1654,7 +1730,3 @@ setup: |-
 
 
 ___NOTES___
-
-Created on 7/22/2020, 3:29:38 PM
-
-
