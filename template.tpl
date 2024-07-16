@@ -275,7 +275,7 @@ ___TEMPLATE_PARAMETERS___
       {
         "type": "LABEL",
         "name": "showSpace_label",
-        "displayName": "If you would like to open particular Messenger space.",
+        "displayName": "If you would like to open a particular Messenger space.",
         "enablingConditions": [
           {
             "paramName": "method",
