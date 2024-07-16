@@ -1618,6 +1618,29 @@ scenarios:
 
     // Verify that the tag finished successfully.
     assertApi('gtmOnSuccess').wasCalled();
+- name: showSpace_works_with_space_name
+  code: |-
+    const copyFromWindow = require('copyFromWindow');
+    const TESTED_METHOD = 'showSpace';
+    const mockData = {
+      method: TESTED_METHOD,
+      space_name: 'news',
+    };
+
+    var q = copyFromWindow('Intercom.q') || [];
+    var q_len = q.length;
+
+    // Call runCode to run the template's code.
+    runCode(mockData);
+
+    // Verify window.Intercom.q's last item is ['showSpace', 'news']
+    q = copyFromWindow('Intercom.q');
+    assertThat(q).hasLength(q_len+1);
+    var q_item = q[q_len];
+    assertIsEventWithNameAndStringArgument(q_item, TESTED_METHOD, mockData.space_name);
+
+    // Verify that the tag finished successfully.
+    assertApi('gtmOnSuccess').wasCalled();
 - name: methods_fail_with_no_arguments
   code: "const copyFromWindow = require('copyFromWindow');\nconst METHODS_TO_TEST\
     \ = ['install', 'boot', 'onHide', 'onShow', 'onUnreadCountChange', 'trackEvent',\
