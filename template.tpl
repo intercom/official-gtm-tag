@@ -680,8 +680,6 @@ ___TEMPLATE_PARAMETERS___
        ]
      }
     ],
-
-
     "enablingConditions": [
       {
         "paramName": "method",
