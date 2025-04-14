@@ -480,6 +480,15 @@ ___TEMPLATE_PARAMETERS___
                   }
                 ],
                 "help": "Current user\u0027s company (Only applicable to users). Use variables as Attribute Name to specify custom company attributes.\nSee https://developers.intercom.com/installing-intercom/docs/javascript-api-attributes-objects#section-company-object for more details."
+              },
+              {
+                "type": "TEXT",
+                "name": "last_request_at",
+                "displayName": "Last Request At",
+                "simpleValueType": true,
+                "valueHint": "Choose a variable",
+                "help": "(Optional) To perform a ping update without modifying the user data, populate this field with the current timestamp.",
+                "valueUnit": "Unix timestamp (in seconds)"
               }
             ],
             "enablingConditions": [
@@ -751,7 +760,7 @@ const dataLayerPush = createQueue('dataLayer');
 const makeTableMap = require('makeTableMap');
 log('data =', data);
 
-const DATA_ATTRS = ['email', 'user_id', 'created_at', 'name', 'phone', 'unsubscribed_from_emails', 'language_override', 'avatar_image_url', 'user_hash', 'company', 'companies'];
+const DATA_ATTRS = ['email', 'user_id', 'created_at', 'name', 'phone', 'unsubscribed_from_emails', 'language_override', 'avatar_image_url', 'user_hash', 'company', 'companies', 'last_request_at'];
 
 const COMPANY_INT_FIELDS = ['created_at', 'monthly_spend', 'size'];
 
