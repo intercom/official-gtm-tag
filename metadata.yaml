@@ -2,7 +2,7 @@ homepage: "https://www.intercom.com/"
 documentation: "https://developers.intercom.com/installing-intercom/docs/intercom-javascript"
 versions:
   # Latest version
-  - sha: be1d0e7067d9f1dbd8b947cefac02174b555c894
+  - sha: 5e9d11f283a32eee53c3abd0a45b2fa279aaae4f
     changeNotes: Add last_request_at attribute.
   # Older versions
   - sha: 92520ff3f6aad0559a8a3a64ea288df2ce157f15
