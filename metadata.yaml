@@ -2,9 +2,11 @@ homepage: "https://www.intercom.com/"
 documentation: "https://developers.intercom.com/installing-intercom/docs/intercom-javascript"
 versions:
   # Latest version
+  - sha: be1d0e7067d9f1dbd8b947cefac02174b555c894
+    changeNotes: Add last_request_at attribute.
+  # Older versions
   - sha: 92520ff3f6aad0559a8a3a64ea288df2ce157f15
     changeNotes: Add showSpace and accompanying test to method options.
-  # Older versions
   - sha: f2fefe0e0da8d34c408a22d97823740989e83ecc
     changeNotes: Add installation_type attribute in the IntercomSettings
   - sha: 24064cfe22a14c89c4ca7c1de120d2aa69404761
