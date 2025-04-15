@@ -2,9 +2,11 @@ homepage: "https://www.intercom.com/"
 documentation: "https://developers.intercom.com/installing-intercom/docs/intercom-javascript"
 versions:
   # Latest version
+  - sha: 20413d04fb38c51b93bef3f1c7275698dc3e47d9
+    changeNotes: Add JWT support by adding intercom_user_jwt attribute.
+  # Older versions
   - sha: 5e9d11f283a32eee53c3abd0a45b2fa279aaae4f
     changeNotes: Add last_request_at attribute.
-  # Older versions
   - sha: 92520ff3f6aad0559a8a3a64ea288df2ce157f15
     changeNotes: Add showSpace and accompanying test to method options.
   - sha: f2fefe0e0da8d34c408a22d97823740989e83ecc
