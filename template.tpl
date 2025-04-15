@@ -404,12 +404,21 @@ ___TEMPLATE_PARAMETERS___
               {
                 "type": "TEXT",
                 "name": "user_hash",
-                "displayName": "User Hash (Identity Verification)",
+                "displayName": "User Hash (Identity Verification - deprecated)",
                 "simpleValueType": true,
-                "help": "(Optional) Bind this to a variable that would hold the \"user hash\" of the currently logged-in user (Only applicable to users).\nSee more details here: https://docs.intercom.com/configure-intercom-for-your-product-or-site/staying-secure/enable-identity-verification-on-your-web-product",
+                "help": "(Optional - Deprecated see intercom_user_jwt) Bind this to a variable that would hold the \"user hash\" of the currently logged-in user (Only applicable to users).\nSee more details here: https://docs.intercom.com/configure-intercom-for-your-product-or-site/staying-secure/enable-identity-verification-on-your-web-product",
                 "valueValidators": [],
                 "valueHint": "Choose a variable"
               },
+              {
+                "type": "TEXT",
+                "name": "intercom_user_jwt",
+                "displayName": "User JWT payload (Messenger security)",
+                "simpleValueType": true,
+                "help": "(Recommended) Bind this to a variable that would hold the \"intercom_user_jwt\" of the currently logged-in user (Only applicable to users).\nSee more details here: https://www.intercom.com/help/en/articles/10589769-authenticating-users-in-the-messenger-with-json-web-tokens-jwts",
+                "valueValidators": [],
+                "valueHint": "Choose a variable"
+              }, 
               {
                 "type": "TEXT",
                 "name": "avatar_image_url",
@@ -760,7 +769,7 @@ const dataLayerPush = createQueue('dataLayer');
 const makeTableMap = require('makeTableMap');
 log('data =', data);
 
-const DATA_ATTRS = ['email', 'user_id', 'created_at', 'name', 'phone', 'unsubscribed_from_emails', 'language_override', 'avatar_image_url', 'user_hash', 'company', 'companies', 'last_request_at'];
+const DATA_ATTRS = ['email', 'user_id', 'created_at', 'name', 'phone', 'unsubscribed_from_emails', 'language_override', 'avatar_image_url', 'user_hash', 'intercom_user_jwt', 'company', 'companies', 'last_request_at'];
 
 const COMPANY_INT_FIELDS = ['created_at', 'monthly_spend', 'size'];
 
