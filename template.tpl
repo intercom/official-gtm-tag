@@ -104,6 +104,10 @@ ___TEMPLATE_PARAMETERS___
           {
             "value": "showSpace",
             "displayValue": "Show Space"
+          },
+          {
+            "value": "startConversation",
+            "displayValue": "Start Conversation"
           }
         ],
         "simpleValueType": true,
@@ -280,6 +284,18 @@ ___TEMPLATE_PARAMETERS___
           {
             "paramName": "method",
             "paramValue": "showSpace",
+            "type": "EQUALS"
+          }
+        ]
+      },
+      {
+        "type": "LABEL",
+        "name": "startConversation_label",
+        "displayName": "Start a new conversation and immediately send a message.",
+        "enablingConditions": [
+          {
+            "paramName": "method",
+            "paramValue": "startConversation",
             "type": "EQUALS"
           }
         ]
@@ -696,6 +712,40 @@ ___TEMPLATE_PARAMETERS___
            "type": "NON_EMPTY"
          }
        ]
+     },
+     {
+       "type": "TEXT",
+       "name": "show_visibility",
+       "displayName": "Visibility",
+       "simpleValueType": true,
+       "enablingConditions": [
+         {
+           "paramName": "method",
+           "paramValue": "show",
+           "type": "EQUALS"
+         }
+       ],
+       "help": "(Optional) Controls the visibility state of the Messenger."
+     },
+     {
+       "type": "TEXT",
+       "name": "start_conversation_message",
+       "displayName": "Message",
+       "simpleValueType": true,
+       "notSetText": "A message is required to start a conversation.",
+       "enablingConditions": [
+         {
+           "paramName": "method",
+           "paramValue": "startConversation",
+           "type": "EQUALS"
+         }
+       ],
+       "help": "The message to send when starting the conversation.",
+       "valueValidators": [
+         {
+           "type": "NON_EMPTY"
+         }
+       ]
      }
     ],
     "enablingConditions": [
@@ -716,7 +766,17 @@ ___TEMPLATE_PARAMETERS___
       },
       {
         "paramName": "method",
+        "paramValue": "show",
+        "type": "EQUALS"
+      },
+      {
+        "paramName": "method",
         "paramValue": "showNewMessage",
+        "type": "EQUALS"
+      },
+      {
+        "paramName": "method",
+        "paramValue": "startConversation",
         "type": "EQUALS"
       },
       {
@@ -945,6 +1005,27 @@ function startTour(ic, settings) {
   data.gtmOnSuccess();
 }
 
+function show(ic, settings) {
+  log("Invoking method: ", data.method);
+  if (data.show_visibility) {
+    ic(data.method, { visibility: data.show_visibility });
+  } else {
+    ic(data.method);
+  }
+  data.gtmOnSuccess();
+}
+
+function startConversation(ic, settings) {
+  var message = data.start_conversation_message;
+  if (!message) {
+    data.gtmOnFailure();
+    return;
+  }
+  log('startConversation: ', message);
+  ic(data.method, message);
+  data.gtmOnSuccess();
+}
+
 function showSpace(ic, settings) {
   var space_name = data.space_name;
   if (!space_name) {
@@ -962,7 +1043,7 @@ var methodMap = {
   boot: boot,
   shutdown: invokeMethod,
   hide: invokeMethod,
-  show: invokeMethod,
+  show: show,
   showMessages: invokeMethod,
   showNewMessage: showNewMessage,
   onShow: registerCallback,
@@ -971,6 +1052,7 @@ var methodMap = {
   trackEvent: trackEvent,
   startTour: startTour,
   showSpace: showSpace,
+  startConversation: startConversation,
 };
 
 function main() {
@@ -1657,10 +1739,117 @@ scenarios:
 
     // Verify that the tag finished successfully.
     assertApi('gtmOnSuccess').wasCalled();
+- name: show_works_with_no_visibility
+  code: |-
+    const copyFromWindow = require('copyFromWindow');
+    const mockData = {
+      method: 'show',
+    };
+
+    var q = copyFromWindow('Intercom.q') || [];
+    var q_len = q.length;
+
+    // Call runCode to run the template's code.
+    runCode(mockData);
+
+    // Verify window.Intercom.q's last item is ['show']
+    q = copyFromWindow('Intercom.q');
+    assertThat(q).hasLength(q_len+1);
+    var q_item = q[q_len];
+    assertIsEventWithNameAndNoArguments(q_item, 'show');
+
+    // Verify that the tag finished successfully.
+    assertApi('gtmOnSuccess').wasCalled();
+- name: show_works_with_collapsed_visibility
+  code: |-
+    const copyFromWindow = require('copyFromWindow');
+    const mockData = {
+      method: 'show',
+      show_visibility: 'collapsed',
+    };
+
+    var q = copyFromWindow('Intercom.q') || [];
+    var q_len = q.length;
+
+    // Call runCode to run the template's code.
+    runCode(mockData);
+
+    // Verify window.Intercom.q's last item is ['show', {visibility: 'collapsed'}]
+    q = copyFromWindow('Intercom.q');
+    assertThat(q).hasLength(q_len+1);
+    var q_item = q[q_len];
+    assertIsEventWithNameAndObjectArgument(q_item, 'show', {visibility: 'collapsed'});
+
+    // Verify that the tag finished successfully.
+    assertApi('gtmOnSuccess').wasCalled();
+- name: show_passes_through_visibility_string
+  code: |-
+    const copyFromWindow = require('copyFromWindow');
+    const mockData = {
+      method: 'show',
+      show_visibility: 'test',
+    };
+
+    var q = copyFromWindow('Intercom.q') || [];
+    var q_len = q.length;
+
+    // Call runCode to run the template's code.
+    runCode(mockData);
+
+    // Verify window.Intercom.q's last item is ['show', {visibility: 'test'}]
+    q = copyFromWindow('Intercom.q');
+    assertThat(q).hasLength(q_len+1);
+    var q_item = q[q_len];
+    assertIsEventWithNameAndObjectArgument(q_item, 'show', {visibility: 'test'});
+
+    // Verify that the tag finished successfully.
+    assertApi('gtmOnSuccess').wasCalled();
+- name: startConversation_works_with_message
+  code: |-
+    const copyFromWindow = require('copyFromWindow');
+    const TESTED_METHOD = 'startConversation';
+    const mockData = {
+      method: TESTED_METHOD,
+      start_conversation_message: 'Hello, I need help!',
+    };
+
+    var q = copyFromWindow('Intercom.q') || [];
+    var q_len = q.length;
+
+    // Call runCode to run the template's code.
+    runCode(mockData);
+
+    // Verify window.Intercom.q's last item is ['startConversation', 'Hello, I need help!']
+    q = copyFromWindow('Intercom.q');
+    assertThat(q).hasLength(q_len+1);
+    var q_item = q[q_len];
+    assertIsEventWithNameAndStringArgument(q_item, TESTED_METHOD, mockData.start_conversation_message);
+
+    // Verify that the tag finished successfully.
+    assertApi('gtmOnSuccess').wasCalled();
+- name: startConversation_fails_without_message
+  code: |-
+    const copyFromWindow = require('copyFromWindow');
+    const mockData = {
+      method: 'startConversation',
+    };
+
+    var q = copyFromWindow('Intercom.q') || [];
+    var q_len = q.length;
+
+    // Call runCode to run the template's code.
+    runCode(mockData);
+
+    // Verify window.Intercom.q remains the same size
+    q = copyFromWindow('Intercom.q');
+    assertThat(q).hasLength(q_len);
+
+    // Verify that the tag finished with failure.
+    assertApi('gtmOnFailure').wasCalled();
 - name: methods_fail_with_no_arguments
   code: "const copyFromWindow = require('copyFromWindow');\nconst METHODS_TO_TEST\
     \ = ['install', 'boot', 'onHide', 'onShow', 'onUnreadCountChange', 'trackEvent',\
-    \ 'startTour'];\n\nfor (var i=0; i < METHODS_TO_TEST.length; i++) {\n  var q =\
+    \ 'startTour', 'startConversation'];\n\nfor (var i=0; i < METHODS_TO_TEST.length; i++) {\n  var q =\
     \ copyFromWindow('Intercom.q') || [];\n  var q_len = q.length;\n  \n  // Call\
     \ runCode to run the template's code.\n  runCode({method: METHODS_TO_TEST[i]});\n\
     \n  // Verify window.Intercom.q remains the same size\n  q = copyFromWindow('Intercom.q');\n\
@@ -1668,7 +1857,7 @@ scenarios:
     \  assertApi('gtmOnFailure').wasCalled();  \n}\n\n\n\n"
 - name: methods_works_with_no_arguments
   code: "const copyFromWindow = require('copyFromWindow');\nconst METHODS_TO_TEST\
-    \ = ['shutdown', 'update', 'hide', 'show', 'showMessages', 'showNewMessage'];\n\
+    \ = ['shutdown', 'update', 'hide', 'showMessages', 'showNewMessage'];\n\
     \nfor (var i=0; i < METHODS_TO_TEST.length; i++) {\n  var q = copyFromWindow('Intercom.q')\
     \ || [];\n  var q_len = q.length;\n  \n  // Call runCode to run the template's\
     \ code.\n  runCode({method: METHODS_TO_TEST[i]});\n\n  // Verify window.Intercom.q\
@@ -1726,6 +1915,14 @@ setup: |-
     assertThat(item).hasLength(2);
     assertThat(item[0]).isEqualTo(event_name);
     assertThat(item[1]).isFunction();
+  }
+
+  function assertIsEventWithNameAndObjectArgument(item, event_name, obj_arg) {
+    assertThat(item).isArray();
+    assertThat(item).hasLength(2);
+    assertThat(item[0]).isEqualTo(event_name);
+    assertThat(item[1]).isObject();
+    assertThat(item[1]).isEqualTo(obj_arg);
   }
 
   function assertIsEventWithNameAndStringAndObjectArguments(item, event_name, string_arg, obj_arg) {
